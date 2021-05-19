@@ -1,81 +1,59 @@
-## Cargo.toml vs Cargo.lock
+## Cargo.toml 与 Cargo.lock
 
-`Cargo.toml` and `Cargo.lock` serve two different purposes. Before we talk
-about them, here’s a summary:
+`Cargo.toml`和`Cargo.lock`各有其目的。在我们谈论它们之前，这是一个总结:
 
-* `Cargo.toml` is about describing your dependencies in a broad sense, and is
-  written by you.
-* `Cargo.lock` contains exact information about your dependencies. It is
-  maintained by Cargo and should not be manually edited.
+- `Cargo.toml`是从广义上描述你的依赖，并由你编写.
+- `Cargo.lock`包含有关您的依赖项的确切信息。它由 Cargo 维护，不应手动编辑.
 
-If you’re building a non-end product, such as a rust library that other rust
-[packages][def-package] will depend on, put `Cargo.lock` in your
-`.gitignore`. If you’re building an end product, which are executable like
-command-line tool or an application, or a system library with crate-type of
-`staticlib` or `cdylib`, check `Cargo.lock` into `git`. If you're curious
-about why that is, see
-["Why do binaries have `Cargo.lock` in version control, but not libraries?" in the
-FAQ](../faq.md#why-do-binaries-have-cargolock-in-version-control-but-not-libraries).
+如果您正在构建，其他项目要依赖的库，请将`Cargo.lock`放置在你的`.gitignore`。如果您正在构建可执行文件，如命令行工具或应用程序，请检查`Cargo.lock`位于`git`管理下。如果你对这是为什么感到好奇，请参阅["为什么二进制文件在版本控制系统中有`Cargo.lock`，而库没有?" - FAQ ](../faq.md#why-do-binaries-have-cargolock-in-version-control-but-not-libraries).
 
-Let’s dig in a little bit more.
+让我们再挖掘一下.
 
-`Cargo.toml` is a [**manifest**][def-manifest] file in which we can specify a
-bunch of different metadata about our package. For example, we can say that we
-depend on another package:
+`Cargo.toml`是一个**manifest(清单)**，我们可以在其中指定一系列关于我们项目的不同元数据的文件。例如，我们可以说我们依赖于另一个项目:
 
 ```toml
 [package]
 name = "hello_world"
 version = "0.1.0"
+authors = ["Your Name <you@example.com>"]
 
 [dependencies]
 rand = { git = "https://github.com/rust-lang-nursery/rand.git" }
 ```
 
-This package has a single dependency, on the `rand` library. We’ve stated in
-this case that we’re relying on a particular Git repository that lives on
-GitHub. Since we haven’t specified any other information, Cargo assumes that
-we intend to use the latest commit on the `master` branch to build our package.
+这个项目有一个依赖关系`rand`箱。在这种情况下，我们已经说过，我们依赖于 GitHub 上的特定 Git 存储库。由于我们尚未指定任何其他信息，因此 Cargo 假定我们打算使用最新提交的`master`分支构建我们的项目。
 
-Sound good? Well, there’s one problem: If you build this package today, and
-then you send a copy to me, and I build this package tomorrow, something bad
-could happen. There could be more commits to `rand` in the meantime, and my
-build would include new commits while yours would not. Therefore, we would
-get different builds. This would be bad because we want reproducible builds.
+听起来不错? 嗯，但有一个问题: 如果你今天构建这个项目，然后你发送一份副本给我，我明天构建这个项目，可能会发生一些不好的事情。因在此期间，可能会有更多的`rand`提交，我的构建将包括新的提交，而你的不会。因此，我们会得到不同的构建。这很糟糕，因为我们需要可重复的构建.
 
-We could fix this problem by putting a `rev` line in our `Cargo.toml`:
+我们可以通过放置一个`rev`来解决这个问题，写入我们`Cargo.toml`:
 
 ```toml
 [dependencies]
 rand = { git = "https://github.com/rust-lang-nursery/rand.git", rev = "9f35b8e" }
 ```
 
-Now our builds will be the same. But there’s a big drawback: now we have to
-manually think about SHA-1s every time we want to update our library. This is
-both tedious and error prone.
+现在我们的构建将是相同的。但是有一个很大的缺点:现在我们每次想要更新库时，都必须手动考虑 SHA-1。这既乏味又容易出错.
 
-Enter the `Cargo.lock`. Because of its existence, we don’t need to manually
-keep track of the exact revisions: Cargo will do it for us. When we have a
-manifest like this:
+那现在`Cargo.lock`登场了。由于它的存在，我们不需要手动跟踪确切的修订版本: Cargo 将为我们做。当我们有这样的清单时:
 
 ```toml
 [package]
 name = "hello_world"
 version = "0.1.0"
+authors = ["Your Name <you@example.com>"]
 
 [dependencies]
 rand = { git = "https://github.com/rust-lang-nursery/rand.git" }
 ```
 
-Cargo will take the latest commit and write that information out into our
-`Cargo.lock` when we build for the first time. That file will look like this:
+Cargo 将采取最新的提交，并在我们第一次构建时，将这些信息写入我们的`Cargo.lock`。该文件将如下所示:
 
 ```toml
-[[package]]
+[root]
 name = "hello_world"
 version = "0.1.0"
 dependencies = [
- "rand 0.1.0 (git+https://github.com/rust-lang-nursery/rand.git#9f35b8e439eeedd60b9414c58f389bdc6a3284f9)",
+ "rand 0.1.0 (git+https://github.com/rust-lang-nursery/rand.git#9f35b8e439eeedd60b9414c58f389bdc6a3284f9)"，
 ]
 
 [[package]]
@@ -84,23 +62,13 @@ version = "0.1.0"
 source = "git+https://github.com/rust-lang-nursery/rand.git#9f35b8e439eeedd60b9414c58f389bdc6a3284f9"
 ```
 
-You can see that there’s a lot more information here, including the exact
-revision we used to build. Now when you give your package to someone else,
-they’ll use the exact same SHA, even though we didn’t specify it in our
-`Cargo.toml`.
+你可以看到这里有更多的信息，包括我们用来构建的确切修订版本。现在，当您将项目交给其他人时，他们将使用完全相同的 SHA，即使我们没有在我们的项目`Cargo.toml`中指定它.
 
-When we’re ready to opt in to a new version of the library, Cargo can
-re-calculate the dependencies and update things for us:
+当我们准备选择，更新库的版本时，Cargo 会自动重新计算依赖关系，并为我们更新内容:
 
-```console
+```shell
 $ cargo update           # updates all dependencies
 $ cargo update -p rand   # updates just “rand”
 ```
 
-This will write out a new `Cargo.lock` with the new version information. Note
-that the argument to `cargo update` is actually a
-[Package ID Specification](../reference/pkgid-spec.md) and `rand` is just a short
-specification.
-
-[def-manifest]:  ../appendix/glossary.md#manifest  '"manifest" (glossary entry)'
-[def-package]:   ../appendix/glossary.md#package   '"package" (glossary entry)'
+这将写出一个新的`Cargo.lock`与新版本信息。请注意`cargo update`参数，实际上会是是一个[包 ID 规范](../reference/pkgid-spec.md)，和`rand`只是一个简短的规范.

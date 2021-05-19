@@ -1,78 +1,82 @@
-# Cargo documentation
+# Cargo 文档
 
-This directory contains Cargo's documentation. There are two parts, [The Cargo
-Book] which is built with [mdbook] and the man pages, which are built with
-[mdman].
+[![LICENSE-MIT](https://img.shields.io/badge/license-MIT-green)](https://raw.githubusercontent.com/rust-lang-cn/cargo-cn/master/LICENSE-MIT)
+[![LICENSE-APACHE](https://img.shields.io/badge/license-Apache%202-blue)](https://raw.githubusercontent.com/rust-lang-cn/cargo-cn/master/LICENSE-APACHE)
+![GitHub last commit](https://img.shields.io/github/last-commit/rust-lang-cn/cargo-cn?color=gold)
+![GitHub contributors](https://img.shields.io/github/contributors/rust-lang-cn/cargo-cn?color=pink)
+![rustwiki.org](https://img.shields.io/website?up_message=rustwiki.org&url=https%3A%2F%2Frustwiki.org)
+
+> Chinese translation of the [Cargo documentation][cargo-doc]
+>
+> 中文译注：
+>
+> 1. Cargo 文档源码主要包含两部分，一是《Cargo 手册》，二是《Cargo 帮助手册》。
+> 2. 本仓库翻译内容源自 [chinanf-boy]的开源的[翻译版本][chinanf-boy-cargo]，我们对原译者感激不尽！该版本最后翻译更新时间是 2019 年 5 月 12 日，与当前的英文版差异比较大，特别期待您加入到本开源翻译项目组中来维护本书，确保本书紧跟英文版。
+> 3. 我们怀着朴素的理想，努力将 Rust 资源翻译成中文，让中文世界中拥有更多官方的 Rust 资源。
+
+[cargo-doc]: https://github.com/rust-lang/cargo/tree/master/src/doc
+[chinanf-boy]: https://github.com/chinanf-boy
+[chinanf-boy-cargo]: https://github.com/chinanf-boy/cargo-book-zh
+
+本目录包含 Cargo 的文档，包含两部分，一是使用 [mdbook] 构建的[《Cargo 手册》][The Cargo Book]，二是使用 [mdman] 构建的帮助手册（man 手册）。
+
+> 注：帮助手册暂未翻译成中文版。
 
 [The Cargo Book]: https://doc.rust-lang.org/cargo/
 [mdBook]: https://github.com/rust-lang/mdBook
 [mdman]: https://github.com/rust-lang/cargo/tree/master/crates/mdman/
 
-### Building the book
 
-Building the book requires [mdBook]. To get it:
+### 构建
+
+构建书籍需要 [mdBook]。获取安装：
 
 ```console
 $ cargo install mdbook
 ```
 
-To build the book:
+构建本书：
 
 ```console
 $ mdbook build
 ```
 
-`mdbook` provides a variety of different commands and options to help you work
-on the book:
+`mdbook` 提供了各种不同的命令和选项来帮助你对书本进行操作：
 
-* `mdbook build --open`: Build the book and open it in a web browser.
-* `mdbook serve`: Launches a web server on localhost. It also automatically
-  rebuilds the book whenever any file changes and automatically reloads your
-  web browser.
+* `mdbook build --open`：构建书本并在 Web 浏览器中打开。
+* `mdbook serve`：在本地主机上启动 Web 服务器。每当任何文件更改时，它也会自动重建书籍，并自动重新加载 Web 浏览器。
 
-The book contents are driven by the [`SUMMARY.md`](src/SUMMARY.md) file, and
-every file must be linked there.
+书籍文件和目录由 [`SUMMARY.md`](src/SUMMARY.md) 确定，并且每个文件都必须在此处给出。
 
-### Building the man pages
+### 构建帮助手册页
 
-The man pages use a tool called [mdman] to convert markdown to a man page
-format. Check out the documentation at
-[`mdman/doc/`](../../crates/mdman/doc/)
-for more details.
+帮助手册页使用名为 [mdman] 的工具将标记转换为手册页格式。 有关更多详细信息，请查阅位于 *cargo* 仓库（官方的 Cargo 工具仓库）中的 [`mdman/doc/`][nmman-doc] 文档。
 
-The man pages are converted from a templated markdown (located in the
-[`src/doc/man/`](man)
-directory) to three different formats:
+手册页从 Markdown 模板（位于 [`src/etc/man/`][man-doc] 目录中）转换为三种不同的格式：
 
-1. Troff-style man pages, saved in [`src/etc/man/`](../etc/man).
-2. Markdown (with some HTML) for the Cargo Book, saved in
-   [`src/doc/src/commands/`](src/commands).
-3. Plain text (needed for embedded man pages on platforms without man such as
-   Windows), saved in [`src/doc/man/generated_txt/`](man/generated_txt).
+1. Troff 样式的手册页，保存在 `src/etc/man/` 目录中。
+2. 《Cargo 手册》中的 Markdown 文件（包含一些 HTML），保存在 `src/doc/src/commands/` 目录中。
+3. 纯文本（在Windows中没有人的平台上的嵌入式手册页需要），保存在 `src/doc/man/generated_txt/` 目录中。
 
-To rebuild the man pages, run the script `build-man.sh` in the `src/doc` directory.
+要重新鬼建手册页，请build-man.sh在src/doc目录中运行脚本。
 
 ```console
 $ ./build-man.sh
 ```
 
-### SemVer chapter tests
+[nmman-doc]: https://github.com/rust-lang/cargo/tree/master/crates/mdman
+[man-doc]: https://github.com/rust-lang/cargo/tree/master/src/etc/man
 
-There is a script to verify that the examples in the SemVer chapter work as
-intended. To run the tests, go into the `semver-check` directory and run
-`cargo run`.
+### 语义化版本章节测试
 
-## Contributing
+有一个脚本可以验证语义化版本章节中的示例是否按预期工作。要运行测试，请进入 `semver-check` 目录并运行 `cargo run`。
 
-We'd love your help with improving the documentation! Please feel free to
-[open issues](https://github.com/rust-lang/cargo/issues) about anything, and
-send in PRs for things you'd like to fix or change. If your change is large,
-please open an issue first, so we can make sure that it's something we'd
-accept before you go through the work of getting a PR together.
+### 参与贡献
 
-## License
+我们很乐意为您提供改善文档的帮助！您可以随时提出有关任何问题的信息，并发送 P R来解决您要修复或更改的问题。如果您的更改很大，请先打开一个 Issue，这样我们才能确保在您完成对应的 PR 的工作之前，我们会接受这一点。
 
-Cargo is primarily distributed under the terms of both the MIT license
-and the Apache License (Version 2.0).
+### 许可协议
 
-See [LICENSE-APACHE](LICENSE-APACHE) and [LICENSE-MIT](LICENSE-MIT) for details.
+《Cargo 手册》和《Cargo 帮助手册》按照 MIT 许可证和 Apache 2.0 许可证进行授权。
+
+有关详细信息，请参见 [LICENSE-APACHE](LICENSE-APACHE) 和 [LICENSE-MIT](LICENSE-MIT)。

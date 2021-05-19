@@ -1,22 +1,16 @@
-## First Steps with Cargo
+## Cargo 的第一步
 
-This section provides a quick sense for the `cargo` command line tool. We
-demonstrate its ability to generate a new [***package***][def-package] for us,
-its ability to compile the [***crate***][def-crate] within the package, and
-its ability to run the resulting program.
+要使用 Cargo 启动新项目，请使用`cargo new`:
 
-To start a new package with Cargo, use `cargo new`:
-
-```console
-$ cargo new hello_world
+```shell
+$ cargo new hello_world --bin
 ```
 
-Cargo defaults to `--bin` to make a binary program. To make a library, we
-would pass `--lib`, instead.
+我们传递`--bin`，是因为我们正在制作一个二进制程序(默认): 如果我们正在创建一个库(lib)，我们就会把传递`--lib`.
 
-Let’s check out what Cargo has generated for us:
+让我们来看看 Cargo 为我们带来了什么:
 
-```console
+```shell
 $ cd hello_world
 $ tree .
 .
@@ -27,21 +21,21 @@ $ tree .
 1 directory, 2 files
 ```
 
-This is all we need to get started. First, let’s check out `Cargo.toml`:
+这就是我们开始所需要的一切。首先，让我们看看`Cargo.toml`:
 
 ```toml
 [package]
 name = "hello_world"
 version = "0.1.0"
+authors = ["Your Name <you@example.com>"]
 edition = "2018"
 
 [dependencies]
 ```
 
-This is called a [***manifest***][def-manifest], and it contains all of the
-metadata that Cargo needs to compile your package.
+这被称为一个**manifest**元清单，它包含了 Cargo 编译项目所需的所有元数据.
 
-Here’s what’s in `src/main.rs`:
+那`src/main.rs`有啥:
 
 ```rust
 fn main() {
@@ -49,34 +43,29 @@ fn main() {
 }
 ```
 
-Cargo generated a “hello world” program for us, otherwise known as a
-[***binary crate***][def-crate]. Let’s compile it:
+Cargo 为我们创造了一个"hello_world".我们来编译它:
 
-```console
+```shell
 $ cargo build
-   Compiling hello_world v0.1.0 (file:///path/to/package/hello_world)
+   Compiling hello_world v0.1.0 (file:///path/to/project/hello_world)
 ```
 
-And then run it:
+然后运行它:
 
-```console
+```shell
 $ ./target/debug/hello_world
 Hello, world!
 ```
 
-We can also use `cargo run` to compile and then run it, all in one step:
+我们也可以直接使用`cargo run`，它会自行编译，然后运行它， 一步到位:
 
-```console
+```shell
 $ cargo run
-     Fresh hello_world v0.1.0 (file:///path/to/package/hello_world)
+     Fresh hello_world v0.1.0 (file:///path/to/project/hello_world)
    Running `target/hello_world`
 Hello, world!
 ```
 
-### Going further
+## 走得更远
 
-For more details on using Cargo, check out the [Cargo Guide](../guide/index.md)
-
-[def-crate]:     ../appendix/glossary.md#crate     '"crate" (glossary entry)'
-[def-manifest]:  ../appendix/glossary.md#manifest  '"manifest" (glossary entry)'
-[def-package]:   ../appendix/glossary.md#package   '"package" (glossary entry)'
+有关使用 Cargo 的更多详细信息，请查看[Cargo 指南](../guide/index.md)

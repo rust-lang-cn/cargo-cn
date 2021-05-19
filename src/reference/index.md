@@ -1,24 +1,15 @@
-## Cargo Reference
+## Cargo 参考
 
-The reference covers the details of various areas of Cargo.
+该参考文献涵盖了 Cargo 各个领域的细节.
 
-* [Specifying Dependencies](specifying-dependencies.md)
-    * [Overriding Dependencies](overriding-dependencies.md)
-* [The Manifest Format](manifest.md)
-    * [Cargo Targets](cargo-targets.md)
-* [Workspaces](workspaces.md)
-* [Features](features.md)
-    * [Features Examples](features-examples.md)
-* [Profiles](profiles.md)
-* [Configuration](config.md)
-* [Environment Variables](environment-variables.md)
-* [Build Scripts](build-scripts.md)
-    * [Build Script Examples](build-script-examples.md)
-* [Publishing on crates.io](publishing.md)
-* [Package ID Specifications](pkgid-spec.md)
-* [Source Replacement](source-replacement.md)
-* [External Tools](external-tools.md)
-* [Registries](registries.md)
-* [Dependency Resolution](resolver.md)
-* [SemVer Compatibility](semver.md)
-* [Unstable Features](unstable.md)
+- [指定依赖项](./specifying-dependencies.md)
+- [清单格式](./manifest.md)
+- [配置](./config.md)
+- [环境变量](./environment-variables.md)
+- [构建脚本](./build-scripts.md)
+- [在 crates.io 上发布](./publishing.md)
+- [包 ID 规格](./pkgid-spec.md)
+- [来源更换](./source-replacement.md)
+- [外部工具](./external-tools.md)
+- [不稳定的功能](./unstable.md)
+

@@ -1,122 +1,91 @@
-## Source Replacement
+## 来源 更换
 
-This document is about replacing the crate index. You can read about overriding
-dependencies in the [overriding dependencies] section of this
-documentation.
+本文档是关于更换 crate 索引(注册表)。您可以阅读有关重写依赖项的信息，它在本文档的[重写依赖关系][overriding]部分。
 
-A *source* is a provider that contains crates that may be included as
-dependencies for a package. Cargo supports the ability to **replace one source
-with another** to express strategies such as:
+Cargo 支持**用另一个来源更换一个来源**的能力，可根据镜像或 vendoring 依赖关系来表达倾向。要配置这些，目前通过[`.cargo/config`配置][config]机制完成，像这样:
 
-* Vendoring - custom sources can be defined which represent crates on the local
-  filesystem. These sources are subsets of the source that they're replacing and
-  can be checked into packages if necessary.
-
-* Mirroring - sources can be replaced with an equivalent version which acts as a
-  cache for crates.io itself.
-
-Cargo has a core assumption about source replacement that the source code is
-exactly the same from both sources. Note that this also means that
-a replacement source is not allowed to have crates which are not present in the
-original source.
-
-As a consequence, source replacement is not appropriate for situations such as
-patching a dependency or a private registry. Cargo supports patching
-dependencies through the usage of [the `[patch]` key][overriding
-dependencies], and private registry support is described in [the Registries
-chapter][registries].
-
-[overriding dependencies]: overriding-dependencies.md
-[registries]: registries.md
-
-### Configuration
-
-Configuration of replacement sources is done through [`.cargo/config.toml`][config]
-and the full set of available keys are:
+[config]: reference/config.md
 
 ```toml
-# The `source` table is where all keys related to source-replacement
-# are stored.
+# `source` 表下，就是存储有关要更换的来源名称
 [source]
 
-# Under the `source` table are a number of other tables whose keys are a
-# name for the relevant source. For example this section defines a new
-# source, called `my-vendor-source`, which comes from a directory
-# located at `vendor` relative to the directory containing this `.cargo/config.toml`
-# file
-[source.my-vendor-source]
+# 在`source` 表格之下的，可为一定数量的有关来源名称. 示例下面就# 定义了一个新源， 叫 `my-awesome-source`， 其内容来自本地 # `vendor`目录 ，其相对于包含`.cargo/config`文件的目录
+[source.my-awesome-source]
 directory = "vendor"
 
-# The crates.io default source for crates is available under the name
-# "crates-io", and here we use the `replace-with` key to indicate that it's
-# replaced with our source above.
-[source.crates-io]
-replace-with = "my-vendor-source"
-
-# Each source has its own table where the key is the name of the source
-[source.the-source-name]
-
-# Indicate that `the-source-name` will be replaced with `another-source`,
-# defined elsewhere
-replace-with = "another-source"
-
-# Several kinds of sources can be specified (described in more detail below):
-registry = "https://example.com/path/to/index"
-local-registry = "path/to/registry"
-directory = "path/to/vendor"
-
-# Git sources can optionally specify a branch/tag/rev as well
+# Git sources 也指定一个 branch/tag/rev
 git = "https://example.com/path/to/repo"
 # branch = "master"
 # tag = "v1.0.1"
 # rev = "313f44e8"
+
+# The crates.io 默认源 在"crates-io"名称下， 且在这里我们使用 `replace-with` 字段指明 默认源更换成"my-awesome-source"源
+[source.crates-io]
+replace-with = "my-awesome-source"
 ```
 
-[config]: config.md
+使用此配置，Cargo 会尝试在"vendor"目录中，查找所有包，而不是 查询在线注册表 crates.io 。Cargo 有两种来源更换的表达 :
 
-### Registry Sources
+- 供应(Vendoring) - 可以定义自定义源，它们表示本地文件系统上的包。这些源是它们正在更换的源的子集，并在需要时可以检入包中。
 
-A "registry source" is one that is the same as crates.io itself. That is, it has
-an index served in a git repository which matches the format of the
-[crates.io index](https://github.com/rust-lang/crates.io-index). That repository
-then has configuration indicating where to download crates from.
+- 镜像(Mirroring) - 可以更换为等效版本的源，行为表现为 crates.io 本身的缓存。
 
-Currently there is not an already-available project for setting up a mirror of
-crates.io. Stay tuned though!
+Cargo 有一个关于来源更换的核心假设，源代码从两个完全相同的源而来。在上面的例子中，Cargo 假设所有的箱子都来自`my-awesome-source`，与`crates-io`副本完全相同。请注意，这也意味着`my-awesome-source`，不允许有`crates-io`源不存在的箱。
 
-### Local Registry Sources
+因此，来源更换不适用于依赖项补丁(fix bug)，或私有注册表等情况。Cargo 是通过使用[`[replace]`字段][replace-section]支持依赖项补丁，计划为未来版本的 Cargo 提供私人注册表的支持。
 
-A "local registry source" is intended to be a subset of another registry
-source, but available on the local filesystem (aka vendoring). Local registries
-are downloaded ahead of time, typically sync'd with a `Cargo.lock`, and are
-made up of a set of `*.crate` files and an index like the normal registry is.
+[replace-section]: reference/manifest.md#the-replace-section
+[overriding]: reference/specifying-dependencies.md#overriding-dependencies
 
-The primary way to manage and create local registry sources is through the
-[`cargo-local-registry`][cargo-local-registry] subcommand,
-[available on crates.io][cargo-local-registry] and can be installed with
-`cargo install cargo-local-registry`.
+### 配置
+
+更换源的配置通过完成[`.cargo/config`][config]，下面为全套可用字段是:
+
+```toml
+# 每个源都有自己的表格，名称即是表名
+[source.the-source-name]
+
+# 命令 ，`the-source-name` 会被`another-source`取代
+replace-with = "another-source"
+
+# 有几种可用的源定义(接下来有所描述)
+registry = "https://example.com/path/to/index"
+local-registry = "path/to/registry"
+directory = "path/to/vendor"
+```
+
+`crates-io`代表 crates.io 在线注册表(箱的默认来源)，可以更换为:
+
+```toml
+[source.crates-io]
+replace-with = 'another-source'
+```
+
+### 注册表源
+
+"注册表源"与 crates.io 本身相同。也就是说，它也有一个在 git 存储库中提供的索引，该存储库匹配[crates.io index](https://github.com/rust-lang/crates.io-index)的格式。然后该存储库具有指示从哪里下载包的配置。
+
+目前还没有一个已经设置 crates.io 的镜像的可用项目。请继续关注!
+
+> 中国用户，可搜索 'rust 换 中科大 源'
+
+### 本地 注册表源
+
+"本地注册表源"旨在成为另一个注册表源的子集，但可在本地文件系统(也称为 vendoring)上使用。本地注册表是提前下载，通常与一个 `Cargo.lock`同步，并由一组`*.crate`文件和像普通注册表一样的索引组成。
+
+管理和创建本地注册表源的主要方法是通过[`cargo-local-registry`][cargo-local-registry]子命令，可在 crates.io 上找到，并用`cargo install cargo-local-registry`安装。
 
 [cargo-local-registry]: https://crates.io/crates/cargo-local-registry
 
-Local registries are contained within one directory and contain a number of
-`*.crate` files downloaded from crates.io as well as an `index` directory with
-the same format as the crates.io-index project (populated with just entries for
-the crates that are present).
+本地注册表包含在一个目录，其中包含许多从 crates.io 下载的`*.crate`文件，以及`index`目录，它与 crates.io-index 项目目录具有相同格式(仅填充有存在的 crates).
 
-### Directory Sources
+### 目录 源
 
-A "directory source" is similar to a local registry source where it contains a
-number of crates available on the local filesystem, suitable for vendoring
-dependencies. Directory sources are primarily managed the `cargo vendor`
-subcommand.
+"目录源"类似于本地注册表源，其中包含本地文件系统上许多的可用包，适用于 vendoring 依赖项。与本地注册表一样，目录源主要由外部子命令管理[`cargo-vendor`][cargo-vendor]，可用`cargo install cargo-vendor`安装。
 
-Directory sources are distinct from local registries though in that they contain
-the unpacked version of `*.crate` files, making it more suitable in some
-situations to check everything into source control. A directory source is just a
-directory containing a number of other directories which contain the source code
-for crates (the unpacked version of `*.crate` files). Currently no restriction
-is placed on the name of each directory.
+[cargo-vendor]: https://crates.io/crates/cargo-vendor
 
-Each crate in a directory source also has an associated metadata file indicating
-the checksum of each file in the crate to protect against accidental
-modifications.
+目录源与本地注册表不同，但它们包含`*.crate`文件的解压缩版本，使其在某些情况下，更适合检查所有内容到源代码控制工具。目录源只是一个包含许多其他目录的目录，其中包含 crates 的源代码(解压缩版本的`*.crate`文件)。目前，对每个目录的名称没有限制。
+
+目录源中的每个包也有一个关联的元数据文件，指示包中每个文件的校验和，以防止意外修改。

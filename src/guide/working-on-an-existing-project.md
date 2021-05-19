@@ -1,24 +1,19 @@
-## Working on an Existing Cargo Package
+## 在现有的 Carog 项目上工作
 
-If you download an existing [package][def-package] that uses Cargo, it’s
-really easy to get going.
+如果您下载使用 Cargo 的现有项目，那么它很容易上手.
 
-First, get the package from somewhere. In this example, we’ll use `rand`
-cloned from its repository on GitHub:
+首先，从某个地方获取项目.在这个例子中，我们将使用`rand`项目，其从 GitHub 上的存储库克隆而来:
 
-```console
+```shell
 $ git clone https://github.com/rust-lang-nursery/rand.git
 $ cd rand
 ```
 
-To build, use `cargo build`:
+要建立，使用`cargo build`:
 
-```console
+```shell
 $ cargo build
-   Compiling rand v0.1.0 (file:///path/to/package/rand)
+   Compiling rand v0.1.0 (file:///path/to/project/rand)
 ```
 
-This will fetch all of the dependencies and then build them, along with the
-package.
-
-[def-package]:  ../appendix/glossary.md#package  '"package" (glossary entry)'
+这将获取所有依赖项，然后与项目一起构建它们.

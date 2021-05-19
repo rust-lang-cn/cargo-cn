@@ -1,284 +1,96 @@
 ## External tools
 
-One of the goals of Cargo is simple integration with third-party tools, like
-IDEs and other build systems. To make integration easier, Cargo has several
-facilities:
+外部工具
 
-* a [`cargo metadata`] command, which outputs package structure and dependencies
-  information in JSON,
+Cargo 的目标之一是与第三方工具(如 IDE 和其他构建系统)的简单集成。为了简化集成，Cargo 有几个设施:
 
-* a `--message-format` flag, which outputs information about a particular build,
-  and
+- 一个`cargo metadata`命令，以 JSON 格式输出包结构和依赖关系信息，
 
-* support for custom subcommands.
+- 一个`--message-format`标志，输出有关特定构建的信息，以及
 
+- 支持自定义子命令.
 
 ### Information about package structure
 
-You can use [`cargo metadata`] command to get information about package
-structure and dependencies. See the [`cargo metadata`] documentation
-for details on the format of the output.
+包结构的资料
 
-The format is stable and versioned. When calling `cargo metadata`, you should
-pass `--format-version` flag explicitly to avoid forward incompatibility
-hazard.
+您可以使用`cargo metadata`命令，以获取有关包结构和依赖关系的信息。命令的输出如下所示:
 
-If you are using Rust, the [cargo_metadata] crate can be used to parse the
-output.
-
-[cargo_metadata]: https://crates.io/crates/cargo_metadata
-[`cargo metadata`]: ../commands/cargo-metadata.md
-
-### JSON messages
-
-When passing `--message-format=json`, Cargo will output the following
-information during the build:
-
-* compiler errors and warnings,
-
-* produced artifacts,
-
-* results of the build scripts (for example, native dependencies).
-
-The output goes to stdout in the JSON object per line format. The `reason` field
-distinguishes different kinds of messages.
-
-The `--message-format` option can also take additional formatting values which
-alter the way the JSON messages are computed and rendered. See the description
-of the `--message-format` option in the [build command documentation] for more
-details.
-
-If you are using Rust, the [cargo_metadata] crate can be used to parse these
-messages.
-
-[build command documentation]: ../commands/cargo-build.md
-[cargo_metadata]: https://crates.io/crates/cargo_metadata
-
-#### Compiler messages
-
-The "compiler-message" message includes output from the compiler, such as
-warnings and errors. See the [rustc JSON chapter](../../rustc/json.md) for
-details on `rustc`'s message format, which is embedded in the following
-structure:
-
-```javascript
+```text
 {
-    /* The "reason" indicates the kind of message. */
-    "reason": "compiler-message",
-    /* The Package ID, a unique identifier for referring to the package. */
-    "package_id": "my-package 0.1.0 (path+file:///path/to/my-package)",
-    /* Absolute path to the package manifest. */
-    "manifest_path": "/path/to/my-package/Cargo.toml",
-    /* The Cargo target (lib, bin, example, etc.) that generated the message. */
-    "target": {
-        /* Array of target kinds.
-           - lib targets list the `crate-type` values from the
-             manifest such as "lib", "rlib", "dylib",
-             "proc-macro", etc. (default ["lib"])
-           - binary is ["bin"]
-           - example is ["example"]
-           - integration test is ["test"]
-           - benchmark is ["bench"]
-           - build script is ["custom-build"]
-        */
-        "kind": [
-            "lib"
-        ],
-        /* Array of crate types.
-           - lib and example libraries list the `crate-type` values
-             from the manifest such as "lib", "rlib", "dylib",
-             "proc-macro", etc. (default ["lib"])
-           - all other target kinds are ["bin"]
-        */
-        "crate_types": [
-            "lib"
-        ],
-        /* The name of the target. */
-        "name": "my-package",
-        /* Absolute path to the root source file of the target. */
-        "src_path": "/path/to/my-package/src/lib.rs",
-        /* The Rust edition of the target.
-           Defaults to the package edition.
-        */
-        "edition": "2018",
-        /* Array of required features.
-           This property is not included if no required features are set.
-        */
-        "required-features": ["feat1"],
-        /* Whether or not this target has doc tests enabled, and
-           the target is compatible with doc testing.
-        */
-        "doctest": true
-    },
-    /* The message emitted by the compiler.
+  // Integer 版本格式数字.
+  "version": integer,
 
-    See https://doc.rust-lang.org/rustc/json.html for details.
-    */
-    "message": {
-        /* ... */
+  // 工作区包的列表, 包括 依赖项.
+  "packages": [
+    {
+      // 包 识别id 队列.
+      "id": PackageId,
+
+      "name": string,
+
+      "version": string,
+
+      "source": SourceId,
+
+      // 确认依赖的一个列表, 可看 `resolve` 字段中的真实依赖.
+      "dependencies": [ Dependency ],
+
+      "targets: [ Target ],
+
+      //  Cargo.toml 路径
+      "manifest_path": string,
     }
+  ],
+
+  "workspace_members": [ PackageId ],
+
+  // 依赖 关系图.
+  "resolve": {
+     "nodes": [
+       {
+         "id": PackageId,
+         "dependencies": [ PackageId ]
+       }
+     ]
+  }
 }
 ```
 
-#### Artifact messages
+格式稳定且有版本化。调用`cargo metadata`时，你应该通过`--format-version`明确标记，以避免向前不兼容的危险。
 
-For every compilation step, a "compiler-artifact" message is emitted with the
-following structure:
+如果你正在使用 Rust，这有个[cargo_metadata]箱.
 
-```javascript
-{
-    /* The "reason" indicates the kind of message. */
-    "reason": "compiler-artifact",
-    /* The Package ID, a unique identifier for referring to the package. */
-    "package_id": "my-package 0.1.0 (path+file:///path/to/my-package)",
-    /* Absolute path to the package manifest. */
-    "manifest_path": "/path/to/my-package/Cargo.toml",
-    /* The Cargo target (lib, bin, example, etc.) that generated the artifacts.
-       See the definition above for `compiler-message` for details.
-    */
-    "target": {
-        "kind": [
-            "lib"
-        ],
-        "crate_types": [
-            "lib"
-        ],
-        "name": "my-package",
-        "src_path": "/path/to/my-package/src/lib.rs",
-        "edition": "2018",
-        "doctest": true,
-        "test": true
-    },
-    /* The profile indicates which compiler settings were used. */
-    "profile": {
-        /* The optimization level. */
-        "opt_level": "0",
-        /* The debug level, an integer of 0, 1, or 2. If `null`, it implies
-           rustc's default of 0.
-        */
-        "debuginfo": 2,
-        /* Whether or not debug assertions are enabled. */
-        "debug_assertions": true,
-        /* Whether or not overflow checks are enabled. */
-        "overflow_checks": true,
-        /* Whether or not the `--test` flag is used. */
-        "test": false
-    },
-    /* Array of features enabled. */
-    "features": ["feat1", "feat2"],
-    /* Array of files generated by this step. */
-    "filenames": [
-        "/path/to/my-package/target/debug/libmy_package.rlib",
-        "/path/to/my-package/target/debug/deps/libmy_package-be9f3faac0a26ef0.rmeta"
-    ],
-    /* A string of the path to the executable that was created, or null if
-       this step did not generate an executable.
-    */
-    "executable": null,
-    /* Whether or not this step was actually executed.
-       When `true`, this means that the pre-existing artifacts were
-       up-to-date, and `rustc` was not executed. When `false`, this means that
-       `rustc` was run to generate the artifacts.
-    */
-    "fresh": true
-}
+[cargo_metadata]: https://crates.io/crates/cargo_metadata
 
-```
+### Information about build
 
-#### Build script output
+关于构建的资料
 
-The "build-script-executed" message includes the parsed output of a build
-script. Note that this is emitted even if the build script is not run; it will
-display the previously cached value. More details about build script output
-may be found in [the chapter on build scripts](build-scripts.md).
+传递`--message-format=json`给，Cargo， 将在构建期间输出以下信息:
 
-```javascript
-{
-    /* The "reason" indicates the kind of message. */
-    "reason": "build-script-executed",
-    /* The Package ID, a unique identifier for referring to the package. */
-    "package_id": "my-package 0.1.0 (path+file:///path/to/my-package)",
-    /* Array of libraries to link, as indicated by the `cargo:rustc-link-lib`
-       instruction. Note that this may include a "KIND=" prefix in the string
-       where KIND is the library kind.
-    */
-    "linked_libs": ["foo", "static=bar"],
-    /* Array of paths to include in the library search path, as indicated by
-       the `cargo:rustc-link-search` instruction. Note that this may include a
-       "KIND=" prefix in the string where KIND is the library kind.
-    */
-    "linked_paths": ["/some/path", "native=/another/path"],
-    /* Array of cfg values to enable, as indicated by the `cargo:rustc-cfg`
-       instruction.
-    */
-    "cfgs": ["cfg1", "cfg2=\"string\""],
-    /* Array of [KEY, VALUE] arrays of environment variables to set, as
-       indicated by the `cargo:rustc-env` instruction.
-    */
-    "env": [
-        ["SOME_KEY", "some value"],
-        ["ANOTHER_KEY", "another value"]
-    ],
-    /* An absolute path which is used as a value of `OUT_DIR` environmental
-       variable when compiling current package.
-    */
-    "out_dir": "/some/path/in/target/dir"
-}
-```
+- 编译器错误和警告，
 
-#### Build finished
+- 制作的工件，
 
-The "build-finished" message is emitted at the end of the build.
+- 构建脚本的结果(例如，本机依赖项).
 
-```javascript
-{
-    /* The "reason" indicates the kind of message. */
-    "reason": "build-finished",
-    /* Whether or not the build finished successfully. */
-    "success": true,
-}
-````
+输出以每行格式的 JSON 对象转到 stdout。`reason`字段区分不同类型的消息.
 
-This message can be helpful for tools to know when to stop reading JSON
-messages. Commands such as `cargo test` or `cargo run` can produce additional
-output after the build has finished. This message lets a tool know that Cargo
-will not produce additional JSON messages, but there may be additional output
-that may be generated afterwards (such as the output generated by the program
-executed by `cargo run`).
-
-> Note: There is experimental nightly-only support for JSON output for tests,
-> so additional test-specific JSON messages may begin arriving after the
-> "build-finished" message if that is enabled.
+有关 Makefile 兼容格式的依赖关系的信息存储在工件旁的`.d`文件中。
 
 ### Custom subcommands
 
-Cargo is designed to be extensible with new subcommands without having to modify
-Cargo itself. This is achieved by translating a cargo invocation of the form
-cargo `(?<command>[^ ]+)` into an invocation of an external tool
-`cargo-${command}`. The external tool must be present in one of the user's
-`$PATH` directories.
+自定义的子命令
 
-When Cargo invokes a custom subcommand, the first argument to the subcommand
-will be the filename of the custom subcommand, as usual. The second argument
-will be the subcommand name itself. For example, the second argument would be
-`${command}` when invoking `cargo-${command}`. Any additional arguments on the
-command line will be forwarded unchanged.
+Cargo 设计为，可以使用新的子命令进行扩展，而无需修改 Cargo 本身。这是通过转化一个 cargo `(?<command>[^ ]+)`的命令调用，变化为调用外部工具`cargo-${command}`来实现的。外部工具必须存在于用户其中一个`$PATH`目录中.
 
-Cargo can also display the help output of a custom subcommand with `cargo help
-${command}`. Cargo assumes that the subcommand will print a help message if its
-third argument is `--help`. So, `cargo help ${command}` would invoke
-`cargo-${command} ${command} --help`.
+当 Cargo 调用自定义子命令时，子命令的第一个参数将像往常一样是自定义子命令的文件名。第二个参数将是子命令名称本身。例如，在调用`cargo-${command}`时，第二个参数是`${command}`。命令行上的其他所有参数将保持不变.
 
-Custom subcommands may use the `CARGO` environment variable to call back to
-Cargo. Alternatively, it can link to `cargo` crate as a library, but this
-approach has drawbacks:
+Cargo 还可以用`cargo help ${command}`显示自定义子命令的帮助输出。Cargo 假定子命令将在第三个参数出现时，打印帮助消息`--help`.所以，`cargo help ${command}`会调用`cargo-${command} ${command} --help`.
 
-* Cargo as a library is unstable: the  API may change without deprecation
-* versions of the linked Cargo library may be different from the Cargo binary
+自定义子命令可以使用`CARGO`环境变量回调 Cargo。或者，它可以链接到作为一个库的`cargo`箱，但这种方法有缺点:
 
-Instead, it is encouraged to use the CLI interface to drive Cargo. The [`cargo
-metadata`] command can be used to obtain information about the current project
-(the [`cargo_metadata`] crate provides a Rust interface to this command).
+- Cargo 作为库是不稳定的:API 可能会更改，但不会弃用
 
-[`cargo metadata`]: ../commands/cargo-metadata.md
-[`cargo_metadata`]: https://crates.io/crates/cargo_metadata
+- 链接的 Cargo 库的版本可能与 Cargo 二进制文件不同

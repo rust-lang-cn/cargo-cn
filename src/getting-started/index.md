@@ -1,9 +1,6 @@
-## Getting Started
+## 开始入门
 
-To get started with Cargo, install Cargo (and Rust) and set up your first
-[*crate*][def-crate].
+要开始使用 Cargo，请安装 Cargo(和 Rust)，并设置您的第一个箱子.
 
-* [Installation](installation.md)
-* [First steps with Cargo](first-steps.md)
-
-[def-crate]:  ../appendix/glossary.md#crate  '"crate" (glossary entry)'
+- [安装](./installation.md)
+- [Cargo 的第一步](./first-steps.md)

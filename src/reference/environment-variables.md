@@ -1,365 +1,97 @@
 ## Environment Variables
 
-Cargo sets and reads a number of environment variables which your code can detect
-or override. Here is a list of the variables Cargo sets, organized by when it interacts
-with them:
+Cargo 设置，并读取许多环境变量，代码可以检测或覆盖这些环境变量。以下是 Cargo 与它们交互时，组织的变量列表:
 
 ### Environment variables Cargo reads
 
-You can override these environment variables to change Cargo's behavior on your
-system:
+Cargo 会读取的环境变量
 
-* `CARGO_HOME` — Cargo maintains a local cache of the registry index and of
-  git checkouts of crates. By default these are stored under `$HOME/.cargo`
-  (`%USERPROFILE%\.cargo` on Windows), but this variable overrides the
-  location of this directory. Once a crate is cached it is not removed by the
-  clean command.
-  For more details refer to the [guide](../guide/cargo-home.md).
-* `CARGO_TARGET_DIR` — Location of where to place all generated artifacts,
-  relative to the current working directory. See [`build.target-dir`] to set
-  via config.
-* `RUSTC` — Instead of running `rustc`, Cargo will execute this specified
-  compiler instead. See [`build.rustc`] to set via config.
-* `RUSTC_WRAPPER` — Instead of simply running `rustc`, Cargo will execute this
-  specified wrapper instead, passing as its commandline arguments the rustc
-  invocation, with the first argument being `rustc`. Useful to set up a build
-  cache tool such as `sccache`. See [`build.rustc-wrapper`] to set via config.
-* `RUSTC_WORKSPACE_WRAPPER` — Instead of simply running `rustc`, Cargo will
-  execute this specified wrapper instead for workspace members only, passing
-  as its commandline arguments the rustc invocation, with the first argument
-  being `rustc`. It affects the filename hash so that artifacts produced by
-  the wrapper are cached separately. See [`build.rustc-workspace-wrapper`]
-  to set via config.
-* `RUSTDOC` — Instead of running `rustdoc`, Cargo will execute this specified
-  `rustdoc` instance instead. See [`build.rustdoc`] to set via config.
-* `RUSTDOCFLAGS` — A space-separated list of custom flags to pass to all `rustdoc`
-  invocations that Cargo performs. In contrast with [`cargo rustdoc`], this is
-  useful for passing a flag to *all* `rustdoc` instances. See
-  [`build.rustdocflags`] for some more ways to set flags.
-* `RUSTFLAGS` — A space-separated list of custom flags to pass to all compiler
-  invocations that Cargo performs. In contrast with [`cargo rustc`], this is
-  useful for passing a flag to *all* compiler instances. See
-  [`build.rustflags`] for some more ways to set flags.
-* `CARGO_INCREMENTAL` — If this is set to 1 then Cargo will force [incremental
-  compilation] to be enabled for the current compilation, and when set to 0 it
-  will force disabling it. If this env var isn't present then cargo's defaults
-  will otherwise be used. See also [`build.incremental`] config value.
-* `CARGO_CACHE_RUSTC_INFO` — If this is set to 0 then Cargo will not try to cache
-  compiler version information.
-* `HTTPS_PROXY` or `https_proxy` or `http_proxy` — The HTTP proxy to use, see
-  [`http.proxy`] for more detail.
-* `HTTP_TIMEOUT` — The HTTP timeout in seconds, see [`http.timeout`] for more
-  detail.
-* `TERM` — If this is set to `dumb`, it disables the progress bar.
-* `BROWSER` — The web browser to execute to open documentation with [`cargo
-  doc`]'s' `--open` flag.
-* `RUSTFMT` — Instead of running `rustfmt`,
-  [`cargo fmt`](https://github.com/rust-lang/rustfmt) will execute this specified
-  `rustfmt` instance instead.
+您可以重写这些环境变量来更改 Cargo 在系统中的行为:
 
-#### Configuration environment variables
+| 名(ENV)                  | 曰                                                                                                                                                        |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CARGO_HOME`             | Cargo 在本地缓存注册表索引和箱子的 git 版本。默认情况下，这些存储在`$HOME/.cargo`，但是这个变量重写了这个目录的位置。一旦箱被缓存，它就不会被清除命令删除。 |
+| `CARGO_TARGET_DIR`       | 相对于当前工作目录，放置所有生成的工件的位置.                                                                                                              |
+| `RUSTC`                  | Cargo 不运行`rustc`，而执行指定的编译器。                                                                                                                 |
+| `RUSTC_WRAPPER`          | Cargo 将执行这个指定的包装器，而不是简单地运行`rustc`。将 rustc 调用 作为其命令行参数传递，第一个参数是 rustc.                                            |
+| `RUSTDOC`                | Cargo 将执行此指定的`rustdoc`实例，而不是`rustdoc`.                                                                                                       |
+| `RUSTDOCFLAGS`           | 空格分隔的自定义标志列表，用来传递给 Cargo 执行的所有`rustdoc`调用 。与`cargo rustdoc`不同，这对于传递一个参数给 _全部的_ `rustdoc`实例是有用的。         |
+| `RUSTFLAGS`              | 自定义参数的空格分隔列表，用来传递给 Cargo 执行的所有编译器调用。与`cargo rustc`不同，这对于传递一个标志 _全部的_ 编译实例是有用的。                      |
+| `CARGO_INCREMENTAL`      | 如果设置为 1，则 Cargo 将强制在当前编译中启用增量编译，而当设置为 0，则强制禁用增量编译。如果这个 ENV 不存在，否则将使用 Cargo 默认值。                       |
+| `CARGO_CACHE_RUSTC_INFO` | 如果这个设置为 0，那么 Cargo 将不尝试缓存编译器版本信息.                                                                                                   |
 
-Cargo reads environment variables for configuration values. See the
-[configuration chapter][config-env] for more details. In summary, the
-supported environment variables are:
+注意，Cargo 也会在`.cargo/config`配置中读取环境变量，如[那份文件][config-env]
 
-* `CARGO_ALIAS_<name>` — Command aliases, see [`alias`].
-* `CARGO_BUILD_JOBS` — Number of parallel jobs, see [`build.jobs`].
-* `CARGO_BUILD_RUSTC` — The `rustc` executable, see [`build.rustc`].
-* `CARGO_BUILD_RUSTC_WRAPPER` — The `rustc` wrapper, see [`build.rustc-wrapper`].
-* `CARGO_BUILD_RUSTC_WORKSPACE_WRAPPER` — The `rustc` wrapper for workspace members only, see [`build.rustc-workspace-wrapper`].
-* `CARGO_BUILD_RUSTDOC` — The `rustdoc` executable, see [`build.rustdoc`].
-* `CARGO_BUILD_TARGET` — The default target platform, see [`build.target`].
-* `CARGO_BUILD_TARGET_DIR` — The default output directory, see [`build.target-dir`].
-* `CARGO_BUILD_RUSTFLAGS` — Extra `rustc` flags, see [`build.rustflags`].
-* `CARGO_BUILD_RUSTDOCFLAGS` — Extra `rustdoc` flags, see [`build.rustdocflags`].
-* `CARGO_BUILD_INCREMENTAL` — Incremental compilation, see [`build.incremental`].
-* `CARGO_BUILD_DEP_INFO_BASEDIR` — Dep-info relative directory, see [`build.dep-info-basedir`].
-* `CARGO_BUILD_PIPELINING` — Whether or not to use `rustc` pipelining, see [`build.pipelining`].
-* `CARGO_CARGO_NEW_VCS` — The default source control system with [`cargo new`], see [`cargo-new.vcs`].
-* `CARGO_HTTP_DEBUG` — Enables HTTP debugging, see [`http.debug`].
-* `CARGO_HTTP_PROXY` — Enables HTTP proxy, see [`http.proxy`].
-* `CARGO_HTTP_TIMEOUT` — The HTTP timeout, see [`http.timeout`].
-* `CARGO_HTTP_CAINFO` — The TLS certificate Certificate Authority file, see [`http.cainfo`].
-* `CARGO_HTTP_CHECK_REVOKE` — Disables TLS certificate revocation checks, see [`http.check-revoke`].
-* `CARGO_HTTP_SSL_VERSION` — The TLS version to use, see [`http.ssl-version`].
-* `CARGO_HTTP_LOW_SPEED_LIMIT` — The HTTP low-speed limit, see [`http.low-speed-limit`].
-* `CARGO_HTTP_MULTIPLEXING` — Whether HTTP/2 multiplexing is used, see [`http.multiplexing`].
-* `CARGO_HTTP_USER_AGENT` — The HTTP user-agent header, see [`http.user-agent`].
-* `CARGO_INSTALL_ROOT` — The default directory for [`cargo install`], see [`install.root`].
-* `CARGO_NET_RETRY` — Number of times to retry network errors, see [`net.retry`].
-* `CARGO_NET_GIT_FETCH_WITH_CLI` — Enables the use of the `git` executable to fetch, see [`net.git-fetch-with-cli`].
-* `CARGO_NET_OFFLINE` — Offline mode, see [`net.offline`].
-* `CARGO_PROFILE_<name>_BUILD_OVERRIDE_<key>` — Override build script profile, see [`profile.<name>.build-override`].
-* `CARGO_PROFILE_<name>_CODEGEN_UNITS` — Set code generation units, see [`profile.<name>.codegen-units`].
-* `CARGO_PROFILE_<name>_DEBUG` — What kind of debug info to include, see [`profile.<name>.debug`].
-* `CARGO_PROFILE_<name>_DEBUG_ASSERTIONS` — Enable/disable debug assertions, see [`profile.<name>.debug-assertions`].
-* `CARGO_PROFILE_<name>_INCREMENTAL` — Enable/disable incremental compilation, see [`profile.<name>.incremental`].
-* `CARGO_PROFILE_<name>_LTO` — Link-time optimization, see [`profile.<name>.lto`].
-* `CARGO_PROFILE_<name>_OVERFLOW_CHECKS` — Enable/disable overflow checks, see [`profile.<name>.overflow-checks`].
-* `CARGO_PROFILE_<name>_OPT_LEVEL` — Set the optimization level, see [`profile.<name>.opt-level`].
-* `CARGO_PROFILE_<name>_PANIC` — The panic strategy to use, see [`profile.<name>.panic`].
-* `CARGO_PROFILE_<name>_RPATH` — The rpath linking option, see [`profile.<name>.rpath`].
-* `CARGO_PROFILE_<name>_SPLIT_DEBUGINFO` — Controls debug file output behavior, see [`profile.<name>.split-debuginfo`].
-* `CARGO_REGISTRIES_<name>_INDEX` — URL of a registry index, see [`registries.<name>.index`].
-* `CARGO_REGISTRIES_<name>_TOKEN` — Authentication token of a registry, see [`registries.<name>.token`].
-* `CARGO_REGISTRY_DEFAULT` — Default registry for the `--registry` flag, see [`registry.default`].
-* `CARGO_REGISTRY_TOKEN` — Authentication token for [crates.io], see [`registry.token`].
-* `CARGO_TARGET_<triple>_LINKER` — The linker to use, see [`target.<triple>.linker`]. The triple must be [converted to uppercase and underscores](config.md#environment-variables).
-* `CARGO_TARGET_<triple>_RUNNER` — The executable runner, see [`target.<triple>.runner`].
-* `CARGO_TARGET_<triple>_RUSTFLAGS` — Extra `rustc` flags for a target, see [`target.<triple>.rustflags`].
-* `CARGO_TERM_VERBOSE` — The default terminal verbosity, see [`term.verbose`].
-* `CARGO_TERM_COLOR` — The default color mode, see [`term.color`].
-* `CARGO_TERM_PROGRESS_WHEN` — The default progress bar showing mode, see [`term.progress.when`].
-* `CARGO_TERM_PROGRESS_WIDTH` — The default progress bar width, see [`term.progress.width`].
-
-[`cargo doc`]: ../commands/cargo-doc.md
-[`cargo install`]: ../commands/cargo-install.md
-[`cargo new`]: ../commands/cargo-new.md
-[`cargo rustc`]: ../commands/cargo-rustc.md
-[`cargo rustdoc`]: ../commands/cargo-rustdoc.md
-[config-env]: config.md#environment-variables
-[crates.io]: https://crates.io/
-[incremental compilation]: profiles.md#incremental
-[`alias`]: config.md#alias
-[`build.jobs`]: config.md#buildjobs
-[`build.rustc`]: config.md#buildrustc
-[`build.rustc-wrapper`]: config.md#buildrustc-wrapper
-[`build.rustc-workspace-wrapper`]: config.md#buildrustc-workspace-wrapper
-[`build.rustdoc`]: config.md#buildrustdoc
-[`build.target`]: config.md#buildtarget
-[`build.target-dir`]: config.md#buildtarget-dir
-[`build.rustflags`]: config.md#buildrustflags
-[`build.rustdocflags`]: config.md#buildrustdocflags
-[`build.incremental`]: config.md#buildincremental
-[`build.dep-info-basedir`]: config.md#builddep-info-basedir
-[`build.pipelining`]: config.md#buildpipelining
-[`cargo-new.name`]: config.md#cargo-newname
-[`cargo-new.email`]: config.md#cargo-newemail
-[`cargo-new.vcs`]: config.md#cargo-newvcs
-[`http.debug`]: config.md#httpdebug
-[`http.proxy`]: config.md#httpproxy
-[`http.timeout`]: config.md#httptimeout
-[`http.cainfo`]: config.md#httpcainfo
-[`http.check-revoke`]: config.md#httpcheck-revoke
-[`http.ssl-version`]: config.md#httpssl-version
-[`http.low-speed-limit`]: config.md#httplow-speed-limit
-[`http.multiplexing`]: config.md#httpmultiplexing
-[`http.user-agent`]: config.md#httpuser-agent
-[`install.root`]: config.md#installroot
-[`net.retry`]: config.md#netretry
-[`net.git-fetch-with-cli`]: config.md#netgit-fetch-with-cli
-[`net.offline`]: config.md#netoffline
-[`profile.<name>.build-override`]: config.md#profilenamebuild-override
-[`profile.<name>.codegen-units`]: config.md#profilenamecodegen-units
-[`profile.<name>.debug`]: config.md#profilenamedebug
-[`profile.<name>.debug-assertions`]: config.md#profilenamedebug-assertions
-[`profile.<name>.incremental`]: config.md#profilenameincremental
-[`profile.<name>.lto`]: config.md#profilenamelto
-[`profile.<name>.overflow-checks`]: config.md#profilenameoverflow-checks
-[`profile.<name>.opt-level`]: config.md#profilenameopt-level
-[`profile.<name>.panic`]: config.md#profilenamepanic
-[`profile.<name>.rpath`]: config.md#profilenamerpath
-[`profile.<name>.split-debuginfo`]: config.md#profilenamesplit-debuginfo
-[`registries.<name>.index`]: config.md#registriesnameindex
-[`registries.<name>.token`]: config.md#registriesnametoken
-[`registry.default`]: config.md#registrydefault
-[`registry.token`]: config.md#registrytoken
-[`target.<triple>.linker`]: config.md#targettriplelinker
-[`target.<triple>.runner`]: config.md#targettriplerunner
-[`target.<triple>.rustflags`]: config.md#targettriplerustflags
-[`term.verbose`]: config.md#termverbose
-[`term.color`]: config.md#termcolor
-[`term.progress.when`]: config.md#termprogresswhen
-[`term.progress.width`]: config.md#termprogresswidth
+[config-env]: ./config.md#environment-variables
 
 ### Environment variables Cargo sets for crates
 
-Cargo exposes these environment variables to your crate when it is compiled.
-Note that this applies for running binaries with `cargo run` and `cargo test`
-as well. To get the value of any of these variables in a Rust program, do
-this:
+Cargo 为 crates 设置的环境变量
 
-```rust,ignore
+Cargo 在编译时，会将这些环境变量暴露在箱子中。请注意，这也适用于测试二进制文件。要在 RIST 程序中获得这些变量中的任何一个变量的值，请执行以下操作:
+
+```rust
 let version = env!("CARGO_PKG_VERSION");
 ```
 
-`version` will now contain the value of `CARGO_PKG_VERSION`.
+`version`现在将包含了`CARGO_PKG_VERSION`值。
 
-Note that if one of these values is not provided in the manifest, the
-corresponding environment variable is set to the empty string, `""`.
-
-* `CARGO` — Path to the `cargo` binary performing the build.
-* `CARGO_MANIFEST_DIR` — The directory containing the manifest of your package.
-* `CARGO_PKG_VERSION` — The full version of your package.
-* `CARGO_PKG_VERSION_MAJOR` — The major version of your package.
-* `CARGO_PKG_VERSION_MINOR` — The minor version of your package.
-* `CARGO_PKG_VERSION_PATCH` — The patch version of your package.
-* `CARGO_PKG_VERSION_PRE` — The pre-release version of your package.
-* `CARGO_PKG_AUTHORS` — Colon separated list of authors from the manifest of your package.
-* `CARGO_PKG_NAME` — The name of your package.
-* `CARGO_PKG_DESCRIPTION` — The description from the manifest of your package.
-* `CARGO_PKG_HOMEPAGE` — The home page from the manifest of your package.
-* `CARGO_PKG_REPOSITORY` — The repository from the manifest of your package.
-* `CARGO_PKG_LICENSE` — The license from the manifest of your package.
-* `CARGO_PKG_LICENSE_FILE` — The license file from the manifest of your package.
-* `CARGO_CRATE_NAME` — The name of the crate that is currently being compiled.
-* `CARGO_BIN_NAME` — The name of the binary that is currently being compiled (if it is a binary). This name does not include any file extension, such as `.exe`.
-* `OUT_DIR` — If the package has a build script, this is set to the folder where the build
-              script should place its output. See below for more information.
-              (Only set during compilation.)
-* `CARGO_BIN_EXE_<name>` — The absolute path to a binary target's executable.
-  This is only set when building an [integration test] or benchmark. This may
-  be used with the [`env` macro] to find the executable to run for testing
-  purposes. The `<name>` is the name of the binary target, exactly as-is. For
-  example, `CARGO_BIN_EXE_my-program` for a binary named `my-program`.
-  Binaries are automatically built when the test is built, unless the binary
-  has required features that are not enabled.
-* `CARGO_PRIMARY_PACKAGE` — This environment variable will be set if the
-  package being built is primary. Primary packages are the ones the user
-  selected on the command-line, either with `-p` flags or the defaults based
-  on the current directory and the default workspace members. This environment
-  variable will not be set when building dependencies. This is only set when
-  compiling the package (not when running binaries or tests).
-* `CARGO_TARGET_TMPDIR` — Only set when building [integration test] or benchmark code.
-  This is a path to a directory inside the target directory
-  where integration tests or benchmarks are free to put any data needed by
-  the tests/benches. Cargo initially creates this directory but doesn't
-  manage its content in any way, this is the responsibility of the test code.
-  There are separate directories for `debug` and `release` profiles.
-
-[integration test]: cargo-targets.md#integration-tests
-[`env` macro]: ../../std/macro.env.html
-
-#### Dynamic library paths
-
-Cargo also sets the dynamic library path when compiling and running binaries
-with commands like `cargo run` and `cargo test`. This helps with locating
-shared libraries that are part of the build process. The variable name depends
-on the platform:
-
-* Windows: `PATH`
-* macOS: `DYLD_FALLBACK_LIBRARY_PATH`
-* Unix: `LD_LIBRARY_PATH`
-
-The value is extended from the existing value when Cargo starts. macOS has
-special consideration where if `DYLD_FALLBACK_LIBRARY_PATH` is not already
-set, it will add the default `$HOME/lib:/usr/local/lib:/usr/lib`.
-
-Cargo includes the following paths:
-
-* Search paths included from any build script with the [`rustc-link-search`
-  instruction](build-scripts.md#rustc-link-search). Paths outside of the
-  `target` directory are removed. It is the responsibility of the user running
-  Cargo to properly set the environment if additional libraries on the system
-  are needed in the search path.
-* The base output directory, such as `target/debug`, and the "deps" directory.
-  This is mostly for legacy support of `rustc` compiler plugins.
-* The rustc sysroot library path. This generally is not important to most
-  users.
+| 名                        | 曰                                                                                     |
+| ------------------------- | -------------------------------------------------------------------------------------- |
+| `CARGO`                   | 执行构建的二进制`cargo`路径.                                                           |
+| `CARGO_MANIFEST_DIR`      | 包含包的清单的目录.                                                                    |
+| `CARGO_PKG_VERSION`       | 您的包的完整版本.                                                                      |
+| `CARGO_PKG_VERSION_MAJOR` | 你的软件包的主要版本.                                                                  |
+| `CARGO_PKG_VERSION_MINOR` | 您的包的次要版本.                                                                      |
+| `CARGO_PKG_VERSION_PATCH` | 包的补丁版本.                                                                          |
+| `CARGO_PKG_VERSION_PRE`   | 包的预发布版本.                                                                        |
+| `CARGO_PKG_AUTHORS`       | 从程序包的清单中，冒号分隔出作者列表.                                                  |
+| `CARGO_PKG_NAME`          | 你的包的名字.                                                                          |
+| `CARGO_PKG_DESCRIPTION`   | 从包的清单中描述.                                                                      |
+| `CARGO_PKG_HOMEPAGE`      | 从包的清单中的主页.                                                                    |
+| `CARGO_PKG_REPOSITORY`    | 从包的清单中存储库.                                                                    |
+| `OUT_DIR`                 | 如果包具有构建脚本，则将其设置为，构建脚本应该在其中放置其输出的文件夹。更多信息见下文. |
 
 ### Environment variables Cargo sets for build scripts
 
-Cargo sets several environment variables when build scripts are run. Because these variables
-are not yet set when the build script is compiled, the above example using `env!` won't work
-and instead you'll need to retrieve the values when the build script is run:
+Cargo 为构建脚本设置的环境变量
 
-```rust,ignore
+当运行构建脚本时，Cargo 设置多个环境变量.因为编译生成脚本时还没有设置这些变量，所以上面的示例使用`env!`无法工作，而是在运行构建脚本时需要检索值:
+
+```rust
 use std::env;
 let out_dir = env::var("OUT_DIR").unwrap();
 ```
 
-`out_dir` will now contain the value of `OUT_DIR`.
+`out_dir`现在将包含的价值`OUT_DIR`.
 
-* `CARGO` — Path to the `cargo` binary performing the build.
-* `CARGO_MANIFEST_DIR` — The directory containing the manifest for the package
-                         being built (the package containing the build
-                         script). Also note that this is the value of the
-                         current working directory of the build script when it
-                         starts.
-* `CARGO_MANIFEST_LINKS` — the manifest `links` value.
-* `CARGO_MAKEFLAGS` — Contains parameters needed for Cargo's [jobserver]
-                      implementation to parallelize subprocesses.
-                      Rustc or cargo invocations from build.rs can already
-                      read `CARGO_MAKEFLAGS`, but GNU Make requires the
-                      flags to be specified either directly as arguments,
-                      or through the `MAKEFLAGS` environment variable.
-                      Currently Cargo doesn't set the `MAKEFLAGS` variable,
-                      but it's free for build scripts invoking GNU Make
-                      to set it to the contents of `CARGO_MAKEFLAGS`.
-* `CARGO_FEATURE_<name>` — For each activated feature of the package being
-                           built, this environment variable will be present
-                           where `<name>` is the name of the feature uppercased
-                           and having `-` translated to `_`.
-* `CARGO_CFG_<cfg>` — For each [configuration option][configuration] of the
-  package being built, this environment variable will contain the value of the
-  configuration, where `<cfg>` is the name of the configuration uppercased and
-  having `-` translated to `_`. Boolean configurations are present if they are
-  set, and not present otherwise. Configurations with multiple values are
-  joined to a single variable with the values delimited by `,`. This includes
-  values built-in to the compiler (which can be seen with `rustc --print=cfg`)
-  and values set by build scripts and extra flags passed to `rustc` (such as
-  those defined in `RUSTFLAGS`). Some examples of what these variables are:
-    * `CARGO_CFG_UNIX` — Set on [unix-like platforms].
-    * `CARGO_CFG_WINDOWS` — Set on [windows-like platforms].
-    * `CARGO_CFG_TARGET_FAMILY=unix` — The [target family], either `unix` or `windows`.
-    * `CARGO_CFG_TARGET_OS=macos` — The [target operating system].
-    * `CARGO_CFG_TARGET_ARCH=x86_64` — The CPU [target architecture].
-    * `CARGO_CFG_TARGET_VENDOR=apple` — The [target vendor].
-    * `CARGO_CFG_TARGET_ENV=gnu` — The [target environment] ABI.
-    * `CARGO_CFG_TARGET_POINTER_WIDTH=64` — The CPU [pointer width].
-    * `CARGO_CFG_TARGET_ENDIAN=little` — The CPU [target endianness].
-    * `CARGO_CFG_TARGET_FEATURE=mmx,sse` — List of CPU [target features] enabled.
-* `OUT_DIR` — the folder in which all output should be placed. This folder is
-              inside the build directory for the package being built, and it is
-              unique for the package in question.
-* `TARGET` — the target triple that is being compiled for. Native code should be
-             compiled for this triple. See the [Target Triple] description
-             for more information.
-* `HOST` — the host triple of the rust compiler.
-* `NUM_JOBS` — the parallelism specified as the top-level parallelism. This can
-               be useful to pass a `-j` parameter to a system like `make`. Note
-               that care should be taken when interpreting this environment
-               variable. For historical purposes this is still provided but
-               recent versions of Cargo, for example, do not need to run `make
-               -j`, and instead can set the `MAKEFLAGS` env var to the content
-               of `CARGO_MAKEFLAGS` to activate the use of Cargo's GNU Make
-               compatible [jobserver] for sub-make invocations.
-* `OPT_LEVEL`, `DEBUG` — values of the corresponding variables for the
-                         profile currently being built.
-* `PROFILE` — `release` for release builds, `debug` for other builds.
-* `DEP_<name>_<key>` — For more information about this set of environment
-                       variables, see build script documentation about [`links`][links].
-* `RUSTC`, `RUSTDOC` — the compiler and documentation generator that Cargo has
-                       resolved to use, passed to the build script so it might
-                       use it as well.
-* `RUSTC_LINKER` — The path to the linker binary that Cargo has resolved to use
-                   for the current target, if specified. The linker can be
-                   changed by editing `.cargo/config.toml`; see the documentation
-                   about [cargo configuration][cargo-config] for more
-                   information.
-* `CARGO_PKG_<var>` - The package information variables, with the same names and values as are [provided during crate building][variables set for crates].
+| 名                     | 曰                                                                                                                                                                                                                                                                                                                 |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `CARGO`                | 执行构建的二进制`cargo`路径.                                                                                                                                                                                                                                                                                       |
+| `CARGO_MANIFEST_DIR`   | 包含正在构建的包的清单的目录(包含构建脚本的包)。还要注意，这是生成脚本启动时，当前工作目录的值.                                                                                                                                                                                                                     |
+| `CARGO_MANIFEST_LINKS` | 清单`links`的值.                                                                                                                                                                                                                                                                                                   |
+| `CARGO_FEATURE_<name>` | 对于正在构建的包的每个激活特性，此环境变量会让`<name>`功能名称存在，名称的`-`会转换成`_`.                                                                                                                                                                                                                          |
+| `CARGO_CFG_<cfg>`      | 对正在构建包的每个[配置选项][configuration]，此环境变量将包含配置的值，其中`<cfg>`就是配置的名称，并将`-`翻译成`_`. 如果设置了布尔配置，则存在布尔配置，否则不存在。具有多个值的配置被连接到单个变量，该变量用`，`分隔就好。                                                                                            |
+| `OUT_DIR`              | 所有输出都应该放在这个文件夹。此文件夹位于正在构建的包的构建目录中，并且对于所讨论的包是唯一的。                                                                                                                                                                                                                   |
+| `TARGET`               | 正在编译的目标三元组。该为这个三元组编译本机代码。关于目标三元组的更多信息在[clang 自身文档中][clang].                                                                                                                                                                                                             |
+| `HOST`                 | Rust 编译器的主机三元组.                                                                                                                                                                                                                                                                                           |
+| `NUM_JOBS`             | 指定为顶层并行的并行性。这可以传递一个`-j`参数到系统(像`make`). 注意，在解释这个环境变量时应该小心。出于历史目的，仍然提供此功能，但是例如，最新版本的 Cargo 不需要运行`make -j`，因为它会自动。Cargo 自行实现[JooServer]，并且允许构建脚本继承这些信息，因此与 GNU 兼容的程序将使作业服务器已经具有适当配置的并行性。 |
+| `OPT_LEVEL` ，`DEBUG`  | 为了分析，当前正在构建的相应变量值.                                                                                                                                                                                                                                                                                |
+| `PROFILE`              | 发布版本用`release`，而`debug`用于其他构建.                                                                                                                                                                                                                                                                        |
+| `DEP_<name>_<key>`     | 有关此组环境变量的更多信息，请参阅[`links`][links].                                                                                                                                                                                                                                                                 |
+| `RUSTC` ，`RUSTDOC`     | Cargo 已经决定使用的编译器和文档生成器，传递给构建脚本，以便构建脚本也可以使用它.                                                                                                                                                                                                                                   |
+| `RUSTC_LINKER`         | 如果指定了，Cargo 为了当前目标，决定使用的链接器(二进制文件)的路径。这个链接器可以通过编辑`.cargo/config`更改，欲了解更多信息，请参阅有关文档[Cargo 配置][cargo-config]。                                                                                                                                          |
 
-[unix-like platforms]: ../../reference/conditional-compilation.html#unix-and-windows
-[windows-like platforms]: ../../reference/conditional-compilation.html#unix-and-windows
-[target family]: ../../reference/conditional-compilation.html#target_family
-[target operating system]: ../../reference/conditional-compilation.html#target_os
-[target architecture]: ../../reference/conditional-compilation.html#target_arch
-[target vendor]: ../../reference/conditional-compilation.html#target_vendor
-[target environment]: ../../reference/conditional-compilation.html#target_env
-[pointer width]: ../../reference/conditional-compilation.html#target_pointer_width
-[target endianness]: ../../reference/conditional-compilation.html#target_endian
-[target features]: ../../reference/conditional-compilation.html#target_feature
-[links]: build-scripts.md#the-links-manifest-key
-[configuration]: ../../reference/conditional-compilation.html
-[jobserver]: https://www.gnu.org/software/make/manual/html_node/Job-Slots.html
-[cargo-config]: config.md
-[Target Triple]: ../appendix/glossary.md#target
-[variables set for crates]: #environment-variables-cargo-sets-for-crates
+[links]: ./build-scripts.md#the-links-manifest-key
+[configuration]: https://doc.rust-lang.org/reference/attributes.md#conditional-compilation
+[clang]: http://clang.llvm.org/docs/CrossCompilation.md#target-triple
+[jobserver]: https://www.gnu.org/software/make/manual/html_node/Job-Slots.md
+[cargo-config]: ./config.md
 
 ### Environment variables Cargo sets for 3rd party subcommands
 
-Cargo exposes this environment variable to 3rd party subcommands
-(ie. programs named `cargo-foobar` placed in `$PATH`):
+Cargo 为 第三方子命令设置的环境变量
 
-* `CARGO` — Path to the `cargo` binary performing the build.
+Cargo 将这个环境变量公开给第三方子命令(即，名为`cargo-foobar`放置在`$PATH`):
+
+- `CARGO` - 执行构建的二进制`cargo`路径。

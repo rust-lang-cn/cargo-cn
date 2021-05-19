@@ -2,66 +2,43 @@
 
 ### Package ID specifications
 
-Subcommands of Cargo frequently need to refer to a particular package within a
-dependency graph for various operations like updating, cleaning, building, etc.
-To solve this problem, Cargo supports *Package ID Specifications*. A specification
-is a string which is used to uniquely refer to one package within a graph of
-packages.
+包 ID 规范
 
-The specification may be fully qualified, such as
-`https://github.com/rust-lang/crates.io-index#regex:1.4.3` or it may be
-abbreviated, such as `regex`. The abbreviated form may be used as long as it
-uniquely identifies a single package in the dependency graph. If there is
-ambiguity, additional qualifiers can be added to make it unique. For example,
-if there are two versions of the `regex` package in the graph, then it can be
-qualified with a version to make it unique, such as `regex:1.4.3`.
+Cargo 的子命令经常需要引用依赖关系图中的特定包来进行各种操作，例如更新，清理，构建等。为了解决这个问题，Cargo 支持包 ID 规范。规范是一个字符串，用于唯一地引用依赖关系图中的一个包.
 
 #### Specification grammar
 
-The formal grammar for a Package Id Specification is:
+规范语法
+
+包 ID 规范的形式语法是:
 
 ```notrust
-spec := pkgname
-       | proto "://" hostname-and-path [ "#" ( pkgname | semver ) ]
+pkgid := pkgname
+       | [ proto "://" ] hostname-and-path [ "#" ( pkgname | semver ) ]
 pkgname := name [ ":" semver ]
 
 proto := "http" | "git" | ...
 ```
 
-Here, brackets indicate that the contents are optional.
-
-The URL form can be used for git dependencies, or to differentiate packages
-that come from different sources such as different registries.
+这里，括号表示内容是可选的.
 
 #### Example specifications
 
-The following are references to the `regex` package on `crates.io`:
+规范示例
 
-| Spec                                                        | Name    | Version |
-|:------------------------------------------------------------|:-------:|:-------:|
-| `regex`                                                     | `regex` | `*`     |
-| `regex:1.4.3`                                               | `regex` | `1.4.3` |
-| `https://github.com/rust-lang/crates.io-index#regex`        | `regex` | `*`     |
-| `https://github.com/rust-lang/crates.io-index#regex:1.4.3`  | `regex` | `1.4.3` |
+这些都可以是对`foo`包的引用，版本`1.2.3`，来自注册表`crates.io`
 
-The following are some examples of specs for several different git dependencies:
-
-| Spec                                                      | Name             | Version  |
-|:----------------------------------------------------------|:----------------:|:--------:|
-| `https://github.com/rust-lang/cargo#0.52.0`               | `cargo`          | `0.52.0` |
-| `https://github.com/rust-lang/cargo#cargo-platform:0.1.1` | <nobr>`cargo-platform`</nobr> | `0.1.1`  |
-| `ssh://git@github.com/rust-lang/regex.git#regex:1.4.3`    | `regex`          | `1.4.3`  |
-
-Local packages on the filesystem can use `file://` URLs to reference them:
-
-| Spec                                   | Name  | Version |
-|:---------------------------------------|:-----:|:-------:|
-| `file:///path/to/my/project/foo`       | `foo` | `*`     |
-| `file:///path/to/my/project/foo#1.1.8` | `foo` | `1.1.8` |
+| pkgid                        | 名称  |   版本    |          网址          |
+| :--------------------------- | :---: | :-----: | :--------------------: |
+| `foo`                        | `foo` |   `*`   |          `*`           |
+| `foo:1.2.3`                  | `foo` | `1.2.3` |          `*`           |
+| `crates.io/foo`              | `foo` |   `*`   |  `*://crates.io/foo`   |
+| `crates.io/foo#1.2.3`        | `foo` | `1.2.3` |  `*://crates.io/foo`   |
+| `crates.io/bar#foo:1.2.3`    | `foo` | `1.2.3` |  `*://crates.io/bar`   |
+| `http://crates.io/foo#1.2.3` | `foo` | `1.2.3` | `http://crates.io/foo` |
 
 #### Brevity of specifications
 
-The goal of this is to enable both succinct and exhaustive syntaxes for
-referring to packages in a dependency graph. Ambiguous references may refer to
-one or more packages. Most commands generate an error if more than one package
-could be referred to with the same specification.
+规范的简洁
+
+这样做的目的是用简洁和详尽的语法来引用依赖图中的包。而不明确的引用可以指代一个或多个包。若使用相同的规范会引用多个包，那大多数命令都会生成错误。

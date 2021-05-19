@@ -1,61 +1,31 @@
-## Package Layout
+## 项目布局
 
-Cargo uses conventions for file placement to make it easy to dive into a new
-Cargo [package][def-package]:
+Cargo 使用文件放置惯例，以便轻松进入新的 Cargo 项目:
 
-```text
+```shell
 .
 ├── Cargo.lock
 ├── Cargo.toml
-├── src/
+├── benches
+│   └── large-input.rs
+├── examples
+│   └── simple.rs
+├── src
+│   ├── bin
+│   │   └── another_executable.rs
 │   ├── lib.rs
-│   ├── main.rs
-│   └── bin/
-│       ├── named-executable.rs
-│       ├── another-executable.rs
-│       └── multi-file-executable/
-│           ├── main.rs
-│           └── some_module.rs
-├── benches/
-│   ├── large-input.rs
-│   └── multi-file-bench/
-│       ├── main.rs
-│       └── bench_module.rs
-├── examples/
-│   ├── simple.rs
-│   └── multi-file-example/
-│       ├── main.rs
-│       └── ex_module.rs
-└── tests/
-    ├── some-integration-tests.rs
-    └── multi-file-test/
-        ├── main.rs
-        └── test_module.rs
+│   └── main.rs
+└── tests
+    └── some-integration-tests.rs
 ```
 
-* `Cargo.toml` and `Cargo.lock` are stored in the root of your package (*package
-  root*).
-* Source code goes in the `src` directory.
-* The default library file is `src/lib.rs`.
-* The default executable file is `src/main.rs`.
-    * Other executables can be placed in `src/bin/`.
-* Benchmarks go in the `benches` directory.
-* Examples go in the `examples` directory.
-* Integration tests go in the `tests` directory.
+- `Cargo.toml`和`Cargo.lock`存储在项目的根目录中.
+- 源代码进入`src`目录.
+- 默认库文件是`src/lib.rs`.
+- 默认的可执行文件是`src/main.rs`.
+- 其他可执行文件，可以放入`src/bin/*.rs`.
+- 集成测试进入`tests`目录(单元测试进到，正在测试的每个文件中).
+- 示例进入`examples`目录.
+- 基准进入`benches`目录.
 
-If a binary, example, bench, or integration test consists of multiple source
-files, place a `main.rs` file along with the extra [*modules*][def-module]
-within a subdirectory of the `src/bin`, `examples`, `benches`, or `tests`
-directory. The name of the executable will be the directory name.
-
-You can learn more about Rust's module system in [the book][book-modules].
-
-See [Configuring a target] for more details on manually configuring targets.
-See [Target auto-discovery] for more information on controlling how Cargo
-automatically infers target names.
-
-[book-modules]: ../../book/ch07-00-managing-growing-projects-with-packages-crates-and-modules.html
-[Configuring a target]: ../reference/cargo-targets.md#configuring-a-target
-[def-package]:           ../appendix/glossary.md#package          '"package" (glossary entry)'
-[def-module]:            ../appendix/glossary.md#module           '"module" (glossary entry)'
-[Target auto-discovery]: ../reference/cargo-targets.md#target-auto-discovery
+这些将在更详细的[清单描述](../reference/manifest.md#the-project-layout)说明中解释.

@@ -1,9 +1,8 @@
-## Continuous Integration
+## 持续集成
 
 ### Travis CI
 
-To test your [package][def-package] on Travis CI, here is a sample
-`.travis.yml` file:
+要在 Travis CI 上测试您的项目，这里有一个`.travis.yml`文件示例:
 
 ```yaml
 language: rust
@@ -16,14 +15,11 @@ matrix:
     - rust: nightly
 ```
 
-This will test all three release channels, but any breakage in nightly
-will not fail your overall build. Please see the [Travis CI Rust
-documentation](https://docs.travis-ci.com/user/languages/rust/) for more
-information.
+这将在所有三个 rust 版本下，进行测试，但 nightly 的任何破坏，都不会使整体构建失败。请看看[Travis CI Rust 文档](https://docs.travis-ci.com/user/languages/rust/)了解更多信息.
 
 ### GitLab CI
 
-To test your package on GitLab CI, here is a sample `.gitlab-ci.yml` file:
+要在 GitLab CI 上测试您的包，这里有一个`.gitlab-ci.yml`文件示例:
 
 ```yaml
 stages:
@@ -45,47 +41,4 @@ rust-nightly:
   allow_failure: true
 ```
 
-This will test on the stable channel and nightly channel, but any
-breakage in nightly will not fail your overall build. Please see the
-[GitLab CI](https://docs.gitlab.com/ce/ci/yaml/README.html) for more
-information.
-
-### builds.sr.ht
-
-To test your package on sr.ht, here is a sample `.build.yml` file.
-Be sure to change `<your repo>` and `<your project>` to the repo to clone and
-the directory where it was cloned.
-
-```yaml
-image: archlinux
-packages:
-  - rustup
-sources:
-  - <your repo>
-tasks:
-  - setup: |
-      rustup toolchain install nightly stable
-      cd <your project>/
-      rustup run stable cargo fetch
-  - stable: |
-      rustup default stable
-      cd <your project>/
-      cargo build --verbose
-      cargo test --verbose
-  - nightly: |
-      rustup default nightly
-      cd <your project>/
-      cargo build --verbose ||:
-      cargo test --verbose  ||:
-  - docs: |
-      cd <your project>/
-      rustup run stable cargo doc --no-deps
-      rustup run nightly cargo doc --no-deps ||:
-```
-
-This will test and build documentation on the stable channel and nightly
-channel, but any breakage in nightly will not fail your overall build. Please
-see the [builds.sr.ht documentation](https://man.sr.ht/builds.sr.ht/) for more
-information.
-
-[def-package]:  ../appendix/glossary.md#package  '"package" (glossary entry)'
+这将测试 stable 版本和 nightly 版本，但 nightly 的任何破损，都不会使整体构建失败。欲获得更多信息，请看[GitLab CI](https://docs.gitlab.com/ce/ci/yaml/README.md).
