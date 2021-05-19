@@ -2,13 +2,15 @@
 
 > 中文译注（Chinese translation of the [Cargo Book][cargo-book]）：
 >
-> 1. 本书翻译内容源自 [chinanf-boy]的开源的[翻译版本][chinanf-boy-cargo]，我们对原译者感激不尽！该版本最后翻译更新时间是 2019 年 5 月 12 日，与当前的英文版差异比较大，特别期待您加入到本开源翻译项目组中来维护本书，确保本书紧跟英文版。
-> 2. 目前英文版已经加入了命令行帮助页部分，还有其他章节内容，内容已经扩充了一倍以上，所以中文版翻译（包括网上所有版本）的部分还不到 1/2。
-> 3. 许可协议：跟随英文原书使用 MIT 和 Apache 2.0 双许可授权。
-> 4. <a href="https://rustwiki.org/zh-CN/cargo" style="color:red;">本站支持文档中英文切换</a>，点击页面右上角语言图标可切换到相同章节的英文页面，**英文版每天都会自动同步一次官方的最新版本**。
-> 5. 若发现本页表达错误或帮助我们改进翻译，可点击右上角的编辑按钮打开本页对应源码文件进行编辑和修改，Rust 中文资源的开源组织发展离不开大家，感谢您的支持和帮助！
+> 1. 《Rust Cookbook 中文版》 翻译自 [Cargo Book][cargo-book]，查看此书的 [Github 翻译项目][cargo-book-cn]。
+> 2. 本书翻译内容源自 [chinanf-boy]的开源的[翻译版本][chinanf-boy-cargo]，我们对原译者感激不尽！该版本最后翻译更新时间是 2019 年 5 月 12 日，与当前的英文版差异比较大，特别期待您加入到本开源翻译项目组中来维护本书，确保本书紧跟英文版。
+> 3. 目前英文版已经加入了命令行帮助页部分，还有其他章节内容，内容已经扩充了一倍以上，所以中文版翻译（包括网上所有版本）的部分还不到 1/2。
+> 4. 许可协议：跟随英文原书使用 MIT 和 Apache 2.0 双许可授权。
+> 5. <a href="https://rustwiki.org/zh-CN/cargo" style="color:red;">本站支持文档中英文切换</a>，点击页面右上角语言图标可切换到相同章节的英文页面，**英文版每天都会自动同步一次官方的最新版本**。
+> 6. 若发现本页表达错误或帮助我们改进翻译，可点击右上角的编辑按钮打开本页对应源码文件进行编辑和修改，Rust 中文资源的开源组织发展离不开大家，感谢您的支持和帮助！
 
 [cargo-book]: https://doc.rust-lang.org/cargo
+[cargo-book-cn]: https://doc.rust-lang.org/cargo-cn
 [chinanf-boy]: https://github.com/chinanf-boy
 [chinanf-boy-cargo]: https://github.com/chinanf-boy/cargo-book-zh
 
