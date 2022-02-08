@@ -1,110 +1,111 @@
 CARGO-CLEAN(1)
 
-NAME
-       cargo-clean - Remove generated artifacts
+名称
+       cargo-clean - 移除已生成的工件
 
-SYNOPSIS
+用法
        cargo clean [options]
 
-DESCRIPTION
-       Remove artifacts from the target directory that Cargo has generated in
-       the past.
+描述
+       将Cargo生成的工件从生成目标目录中移除。
 
-       With no options, cargo clean will delete the entire target directory.
+       若不添加参数，cargo clean 会删除整个target目录。
 
-OPTIONS
-   Package Selection
-       When no packages are selected, all packages and all dependencies in the
-       workspace are cleaned.
+可选参数
+   选择包
+       若不指定包名，则清除工作目录中的所有的包和依赖
 
        -p spec..., --package spec...
-           Clean only the specified packages. This flag may be specified
-           multiple times. See cargo-pkgid(1) for the SPEC format.
 
-   Clean Options
+           只清理参数指定的包中的文件。这个参数可以多次使用来指定多个包，详见
+           cargo-pkgid(1) 。
+
+   清理选项
        --doc
-           This option will cause cargo clean to remove only the doc directory
-           in the target directory.
+           添加该参数后，cargo
+           clean命令只会移除生成目标目录中的doc目录。
 
        --release
-           Clean all artifacts that were built with the release or bench
-           profiles.
+           移除release目录中的工件。
+
+       --profile name
+           移除指定编译配置(Profile)目录中的全部工件。
 
        --target-dir directory
-           Directory for all generated artifacts and intermediate files. May
-           also be specified with the CARGO_TARGET_DIR environment variable, or
-           the build.target-dir config value
-           <https://doc.rust-lang.org/cargo/reference/config.html>. Defaults to
-           target in the root of the workspace.
+
+           用于存放生成的工件以及中间文件的目录。也可通过环境变量CARGO_TARGET_DIR
+           或 build.target-dir config value
+           <https://doc.rust-lang.org/cargo/reference/config.html>指定。
+
+           默认情况下为根工作区中的target目录。
 
        --target triple
-           Clean for the given architecture. The default is the host
-           architecture. The general format of the triple is
-           <arch><sub>-<vendor>-<sys>-<abi>. Run rustc --print target-list for
-           a list of supported targets.
+           为指定架构执行 Clean
+           。默认情况下为本机的架构。三元组的格式为
+           <arch><sub>-<vendor>-<sys>-<abi>。执行 rustc --print target-list
+           可得到支持的构建目标列表。
 
-           This may also be specified with the build.target config value
-           <https://doc.rust-lang.org/cargo/reference/config.html>.
+           也可通过build.target指定(config value
+           <https://doc.rust-lang.org/cargo/reference/config.html>)。
 
-           Note that specifying this flag makes Cargo run in a different mode
-           where the target artifacts are placed in a separate directory. See
-           the build cache
+
+           注意，指定该标志参数会使Cargo产生的构建工件放在与平常不同的目录下。
+           详情参见build cache
            <https://doc.rust-lang.org/cargo/guide/build-cache.html>
-           documentation for more details.
 
-   Display Options
+   显示选项
        -v, --verbose
-           Use verbose output. May be specified twice for "very verbose" output
-           which includes extra output such as dependency warnings and build
-           script output. May also be specified with the term.verbose config
-           value <https://doc.rust-lang.org/cargo/reference/config.html>.
+
+           启用更加详细的输出。可两次使用来显示"非常详细"的输出，其中包含了诸如
+           依赖警告 以及 构建脚本输出 等额外的输出内容。
+           也可通过term.verbose指定。 config value
+           <https://doc.rust-lang.org/cargo/reference/config.html>.
 
        -q, --quiet
-           No output printed to stdout.
+           不输出Cargo的日志信息。也可通过term.quiet指定。
+           config value
+           <https://doc.rust-lang.org/cargo/reference/config.html>.
 
        --color when
-           Control when colored output is used. Valid values:
+           控制输出内容的颜色。有效取值如下：
 
-           o  auto (default): Automatically detect if color support is
-              available on the terminal.
+           o  auto
+              (默认)：自动检测终端是否支持带颜色的输出。
 
-           o  always: Always display colors.
+           o  always：总显示带颜色的输出。
 
-           o  never: Never display colors.
+           o  never：从不显示带颜色的输出。
 
-           May also be specified with the term.color config value
+           也可通过term.color指定。 config value
            <https://doc.rust-lang.org/cargo/reference/config.html>.
 
-   Manifest Options
+   清单选项
        --manifest-path path
-           Path to the Cargo.toml file. By default, Cargo searches for the
-           Cargo.toml file in the current directory or any parent directory.
+
+           用于指定Cargo.toml文件的路径。默认情况下，Cargo会在当前目录或上级目录中寻找Cargo.toml文件。
 
        --frozen, --locked
-           Either of these flags requires that the Cargo.lock file is
-           up-to-date. If the lock file is missing, or it needs to be updated,
-           Cargo will exit with an error. The --frozen flag also prevents Cargo
-           from attempting to access the network to determine if it is
-           out-of-date.
 
-           These may be used in environments where you want to assert that the
-           Cargo.lock file is up-to-date (such as a CI build) or want to avoid
-           network access.
+           这两个选项用于保证Cargo.lock文件是最新的。如果该锁文件不存在，或者不是最新的，Cargo
+           会报错退出。其中--frozen选项会阻止Cargo访问网络以检查锁文件是否是最新的。
+
+
+           这些选项，可用于保证Cargo.lock文件是最新的(比如持续集成的构建过程)，
+           或用于避免联网。
 
        --offline
-           Prevents Cargo from accessing the network for any reason. Without
-           this flag, Cargo will stop with an error if it needs to access the
-           network and the network is not available. With this flag, Cargo will
-           attempt to proceed without the network if possible.
 
-           Beware that this may result in different dependency resolution than
-           online mode. Cargo will restrict itself to crates that are
-           downloaded locally, even if there might be a newer version as
-           indicated in the local copy of the index. See the cargo-fetch(1)
-           command to download dependencies before going offline.
+           禁止Cargo访问网络。如果不添加此选项，Cargo在需要访问网络但网络不可用的情况下，会报错
+           并停止工作。添加此选项后，Cargo会尽可能尝试不使用网络来工作。
 
-           May also be specified with the net.offline config value
-           <https://doc.rust-lang.org/cargo/reference/config.html>.
+
+           注意，在此情况下可能会产生与联网状态下不同的依赖解析(Dependency
+           Resolution)结果。
+           Cargo只会使用本地已下载的crate，即便本地的索引副本中表明可能有新版本crate。在离线前下载
+           所需依赖的方法，参见 cargo-fetch(1) 。
+
+           也可以通过 net.offline config value
+           <https://doc.rust-lang.org/cargo/reference/config.html>指定。
 
    Common Options
        +toolchain
@@ -121,25 +122,24 @@ OPTIONS
            Unstable (nightly-only) flags to Cargo. Run cargo -Z help for
            details.
 
-ENVIRONMENT
-       See the reference
+环境
+       关于Cargo所读取的环境变量，可参见the reference
        <https://doc.rust-lang.org/cargo/reference/environment-variables.html>
-       for details on environment variables that Cargo reads.
 
-EXIT STATUS
-       o  0: Cargo succeeded.
+退出状态
+       o  0: Cargo命令执行成功
 
-       o  101: Cargo failed to complete.
+       o  101: Cargo命令未能完成.
 
-EXAMPLES
-       1. Remove the entire target directory:
+示例
+       1. 移除整个生成目标目录:
 
               cargo clean
 
-       2. Remove only the release artifacts:
+       2. 仅移除release目录中的工件:
 
               cargo clean --release
 
-SEE ALSO
+相关
        cargo(1), cargo-build(1)
 

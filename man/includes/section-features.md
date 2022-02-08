@@ -1,26 +1,23 @@
-### Feature Selection
+### 特性选择
 
-The feature flags allow you to control which features are enabled. When no
-feature options are given, the `default` feature is activated for every
-selected package.
+可通过传递特性参数来控制启用哪些特性。如果没有给定要使用的特性，
+则每个已选择的包都会自动使用`default`特性。
 
-See [the features documentation](../reference/features.html#command-line-feature-options)
-for more details.
+详见[the features documentation](../reference/features.html#command-line-feature-options)。
 
 {{#options}}
 
 {{#option "`--features` _features_" }}
-Space or comma separated list of features to activate. Features of workspace
-members may be enabled with `package-name/feature-name` syntax. This flag may
-be specified multiple times, which enables all specified features.
+传递以空格或者逗号分隔的列表，其中给出要启用的特性。工作区成员的特性可通过`包名/特性名`的语法启用。
+此参数可多次给定，以分别启用给定的特性。
 {{/option}}
 
 {{#option "`--all-features`" }}
-Activate all available features of all selected packages.
+为给定的包启用全部可用特性
 {{/option}}
 
 {{#option "`--no-default-features`" }}
-Do not activate the `default` feature of the selected packages.
+不启用给定包的`default`特性
 {{/option}}
 
 {{/options}}

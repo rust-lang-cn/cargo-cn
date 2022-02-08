@@ -71,6 +71,15 @@ flag can be used to display the package's reverse dependencies only with the
 subtree of the package given to <code>-p</code>.</dd>
 
 
+<dt class="option-term" id="option-cargo-tree---prune"><a class="option-anchor" href="#option-cargo-tree---prune"></a><code>--prune</code> <em>spec</em></dt>
+<dd class="option-desc">Prune the given package from the display of the dependency tree.</dd>
+
+
+<dt class="option-term" id="option-cargo-tree---depth"><a class="option-anchor" href="#option-cargo-tree---depth"></a><code>--depth</code> <em>depth</em></dt>
+<dd class="option-desc">Maximum display depth of the dependency tree. A depth of 1 displays the direct
+dependencies, for example.</dd>
+
+
 <dt class="option-term" id="option-cargo-tree---no-dedupe"><a class="option-anchor" href="#option-cargo-tree---no-dedupe"></a><code>--no-dedupe</code></dt>
 <dd class="option-desc">Do not de-duplicate repeated dependencies. Usually, when a package has already
 displayed its dependencies, further occurrences will not re-display its
@@ -103,8 +112,10 @@ kind given, then it will automatically include the other dependency kinds.</li>
 <li><code>no-normal</code> — Do not include normal dependencies.</li>
 <li><code>no-build</code> — Do not include build dependencies.</li>
 <li><code>no-dev</code> — Do not include development dependencies.</li>
+<li><code>no-proc-macro</code> — Do not include procedural macro dependencies.</li>
 </ul>
-<p>The <code>no-</code> prefixed options cannot be mixed with the other dependency kinds.</p>
+<p>The <code>normal</code>, <code>build</code>, <code>dev</code>, and <code>all</code> dependency kinds cannot be mixed with
+<code>no-normal</code>, <code>no-build</code>, or <code>no-dev</code> dependency kinds.</p>
 <p>The default is <code>normal,build,dev</code>.</dd>
 
 
@@ -134,6 +145,7 @@ strings will be replaced with the corresponding value:</p>
 <li><code>{l}</code> — The package license.</li>
 <li><code>{r}</code> — The package repository URL.</li>
 <li><code>{f}</code> — Comma-separated list of package features that are enabled.</li>
+<li><code>{lib}</code> — The name, as used in a <code>use</code> statement, of the package's library.</li>
 </ul></dd>
 
 
@@ -148,42 +160,34 @@ strings will be replaced with the corresponding value:</p>
 
 </dl>
 
-### Package Selection
+### 选择包
 
-By default, when no package selection options are given, the packages selected
-depend on the selected manifest file (based on the current working directory if
-`--manifest-path` is not given). If the manifest is the root of a workspace then
-the workspaces default members are selected, otherwise only the package defined
-by the manifest will be selected.
+默认情况下，如果没有指定包，则根据清单文件来选择包(如果没有通过`--manifest-path`给出清单文件路径，
+则基于当前工作目录进行寻找)。如果是某个工作区的根清单，则选中该工作区的默认成员；否则仅选中清
+单所定义的那个包。
 
-The default members of a workspace can be set explicitly with the
-`workspace.default-members` key in the root manifest. If this is not set, a
-virtual workspace will include all workspace members (equivalent to passing
-`--workspace`), and a non-virtual workspace will include only the root crate itself.
+工作区的默认成员可通过清单中`workspace.default-members`项来显式指定。如果未指定，则其虚拟
+工作区会包含全体工作区成员(等同于传递`--workspace`标志参数时)，而非虚拟工作区则仅包含根部箱自身。
 
 <dl>
 
 <dt class="option-term" id="option-cargo-tree--p"><a class="option-anchor" href="#option-cargo-tree--p"></a><code>-p</code> <em>spec</em>...</dt>
 <dt class="option-term" id="option-cargo-tree---package"><a class="option-anchor" href="#option-cargo-tree---package"></a><code>--package</code> <em>spec</em>...</dt>
-<dd class="option-desc">Display only the specified packages. See <a href="cargo-pkgid.html">cargo-pkgid(1)</a> for the
-SPEC format. This flag may be specified multiple times and supports common Unix
-glob patterns like <code>*</code>, <code>?</code> and <code>[]</code>. However, to avoid your shell accidentally 
-expanding glob patterns before Cargo handles them, you must use single quotes or
-double quotes around each pattern.</dd>
+<dd class="option-desc">Display指定包. SPEC的格式参见 <a href="cargo-pkgid.html">cargo-pkgid(1)</a> 。
+此标志参数可多次使用且支持Unix通配符(<code>*</code>, <code>?</code> 和 <code>[]</code>)。不过，为避免shell可能错误地在Cargo获取到
+之前就将通配符展开，应在各个模式串两侧使用单引号或双引号。</dd>
 
 
 <dt class="option-term" id="option-cargo-tree---workspace"><a class="option-anchor" href="#option-cargo-tree---workspace"></a><code>--workspace</code></dt>
-<dd class="option-desc">Display all members in the workspace.</dd>
+<dd class="option-desc">Display 工作区中的全体成员.</dd>
 
 
 
 
 <dt class="option-term" id="option-cargo-tree---exclude"><a class="option-anchor" href="#option-cargo-tree---exclude"></a><code>--exclude</code> <em>SPEC</em>...</dt>
-<dd class="option-desc">Exclude the specified packages. Must be used in conjunction with the
-<code>--workspace</code> flag. This flag may be specified multiple times and supports
-common Unix glob patterns like <code>*</code>, <code>?</code> and <code>[]</code>. However, to avoid your shell
-accidentally expanding glob patterns before Cargo handles them, you must use
-single quotes or double quotes around each pattern.</dd>
+<dd class="option-desc">排除指定包。必须与<code>--workspace</code>标志参数共同使用。
+此标志参数可多次使用且支持Unix通配符(<code>*</code>, <code>?</code> 和 <code>[]</code>)。不过，为避免shell可能错误地在Cargo获取到
+之前就将通配符展开，应在各个模式串两侧使用单引号或双引号。</dd>
 
 
 </dl>
@@ -194,61 +198,50 @@ single quotes or double quotes around each pattern.</dd>
 <dl>
 
 <dt class="option-term" id="option-cargo-tree---manifest-path"><a class="option-anchor" href="#option-cargo-tree---manifest-path"></a><code>--manifest-path</code> <em>path</em></dt>
-<dd class="option-desc">Path to the <code>Cargo.toml</code> file. By default, Cargo searches for the
-<code>Cargo.toml</code> file in the current directory or any parent directory.</dd>
+<dd class="option-desc">用于指定<code>Cargo.toml</code>文件的路径。默认情况下，Cargo会在当前目录或上级目录中寻找<code>Cargo.toml</code>文件。</dd>
 
 
 
 <dt class="option-term" id="option-cargo-tree---frozen"><a class="option-anchor" href="#option-cargo-tree---frozen"></a><code>--frozen</code></dt>
 <dt class="option-term" id="option-cargo-tree---locked"><a class="option-anchor" href="#option-cargo-tree---locked"></a><code>--locked</code></dt>
-<dd class="option-desc">Either of these flags requires that the <code>Cargo.lock</code> file is
-up-to-date. If the lock file is missing, or it needs to be updated, Cargo will
-exit with an error. The <code>--frozen</code> flag also prevents Cargo from
-attempting to access the network to determine if it is out-of-date.</p>
-<p>These may be used in environments where you want to assert that the
-<code>Cargo.lock</code> file is up-to-date (such as a CI build) or want to avoid network
-access.</dd>
+<dd class="option-desc">这两个选项用于保证<code>Cargo.lock</code>文件是最新的。如果该锁文件不存在，或者不是最新的，Cargo
+会报错退出。其中<code>--frozen</code>选项会阻止Cargo访问网络以检查锁文件是否是最新的。</p>
+<p>这些选项，可用于保证<code>Cargo.lock</code>文件是最新的(比如持续集成的构建过程)，
+或用于避免联网。</dd>
 
 
 <dt class="option-term" id="option-cargo-tree---offline"><a class="option-anchor" href="#option-cargo-tree---offline"></a><code>--offline</code></dt>
-<dd class="option-desc">Prevents Cargo from accessing the network for any reason. Without this
-flag, Cargo will stop with an error if it needs to access the network and
-the network is not available. With this flag, Cargo will attempt to
-proceed without the network if possible.</p>
-<p>Beware that this may result in different dependency resolution than online
-mode. Cargo will restrict itself to crates that are downloaded locally, even
-if there might be a newer version as indicated in the local copy of the index.
-See the <a href="cargo-fetch.html">cargo-fetch(1)</a> command to download dependencies before going
-offline.</p>
-<p>May also be specified with the <code>net.offline</code> <a href="../reference/config.html">config value</a>.</dd>
+<dd class="option-desc">禁止Cargo访问网络。如果不添加此选项，Cargo在需要访问网络但网络不可用的情况下，会报错
+并停止工作。添加此选项后，Cargo会尽可能尝试不使用网络来工作。</p>
+<p>注意，在此情况下可能会产生与联网状态下不同的依赖解析(<strong>Dependency Resolution</strong>)结果。
+Cargo只会使用本地已下载的crate，即便本地的索引副本中表明可能有新版本crate。在离线前下载
+所需依赖的方法，参见 <a href="cargo-fetch.html">cargo-fetch(1)</a> 。</p>
+<p>也可以通过 <code>net.offline</code> <a href="../reference/config.html">config value</a>指定。</dd>
 
 
 
 </dl>
 
-### Feature Selection
+### 特性选择
 
-The feature flags allow you to control which features are enabled. When no
-feature options are given, the `default` feature is activated for every
-selected package.
+可通过传递特性参数来控制启用哪些特性。如果没有给定要使用的特性，
+则每个已选择的包都会自动使用`default`特性。
 
-See [the features documentation](../reference/features.html#command-line-feature-options)
-for more details.
+详见[the features documentation](../reference/features.html#command-line-feature-options)。
 
 <dl>
 
 <dt class="option-term" id="option-cargo-tree---features"><a class="option-anchor" href="#option-cargo-tree---features"></a><code>--features</code> <em>features</em></dt>
-<dd class="option-desc">Space or comma separated list of features to activate. Features of workspace
-members may be enabled with <code>package-name/feature-name</code> syntax. This flag may
-be specified multiple times, which enables all specified features.</dd>
+<dd class="option-desc">传递以空格或者逗号分隔的列表，其中给出要启用的特性。工作区成员的特性可通过<code>包名/特性名</code>的语法启用。
+此参数可多次给定，以分别启用给定的特性。</dd>
 
 
 <dt class="option-term" id="option-cargo-tree---all-features"><a class="option-anchor" href="#option-cargo-tree---all-features"></a><code>--all-features</code></dt>
-<dd class="option-desc">Activate all available features of all selected packages.</dd>
+<dd class="option-desc">为给定的包启用全部可用特性</dd>
 
 
 <dt class="option-term" id="option-cargo-tree---no-default-features"><a class="option-anchor" href="#option-cargo-tree---no-default-features"></a><code>--no-default-features</code></dt>
-<dd class="option-desc">Do not activate the <code>default</code> feature of the selected packages.</dd>
+<dd class="option-desc">不启用给定包的<code>default</code>特性</dd>
 
 
 </dl>
@@ -260,26 +253,25 @@ be specified multiple times, which enables all specified features.</dd>
 
 <dt class="option-term" id="option-cargo-tree--v"><a class="option-anchor" href="#option-cargo-tree--v"></a><code>-v</code></dt>
 <dt class="option-term" id="option-cargo-tree---verbose"><a class="option-anchor" href="#option-cargo-tree---verbose"></a><code>--verbose</code></dt>
-<dd class="option-desc">Use verbose output. May be specified twice for &quot;very verbose&quot; output which
-includes extra output such as dependency warnings and build script output.
-May also be specified with the <code>term.verbose</code>
+<dd class="option-desc">启用更加详细的输出。可两次使用来显示&quot;非常详细&quot;的输出，其中包含了诸如 依赖警告 以及 构建脚本输出 等额外的输出内容。
+也可通过<code>term.verbose</code>指定。
 <a href="../reference/config.html">config value</a>.</dd>
 
 
 <dt class="option-term" id="option-cargo-tree--q"><a class="option-anchor" href="#option-cargo-tree--q"></a><code>-q</code></dt>
 <dt class="option-term" id="option-cargo-tree---quiet"><a class="option-anchor" href="#option-cargo-tree---quiet"></a><code>--quiet</code></dt>
-<dd class="option-desc">No output printed to stdout.</dd>
+<dd class="option-desc">不输出Cargo的日志信息。也可通过<code>term.quiet</code>指定。
+<a href="../reference/config.html">config value</a>.</dd>
 
 
 <dt class="option-term" id="option-cargo-tree---color"><a class="option-anchor" href="#option-cargo-tree---color"></a><code>--color</code> <em>when</em></dt>
-<dd class="option-desc">Control when colored output is used. Valid values:</p>
+<dd class="option-desc">控制输出内容的颜色。有效取值如下：</p>
 <ul>
-<li><code>auto</code> (default): Automatically detect if color support is available on the
-terminal.</li>
-<li><code>always</code>: Always display colors.</li>
-<li><code>never</code>: Never display colors.</li>
+<li><code>auto</code> (默认)：自动检测终端是否支持带颜色的输出。</li>
+<li><code>always</code>：总显示带颜色的输出。</li>
+<li><code>never</code>：从不显示带颜色的输出。</li>
 </ul>
-<p>May also be specified with the <code>term.color</code>
+<p>也可通过<code>term.color</code>指定。
 <a href="../reference/config.html">config value</a>.</dd>
 
 
@@ -310,16 +302,15 @@ for more information about how toolchain overrides work.</dd>
 </dl>
 
 
-## ENVIRONMENT
+## 环境
 
-See [the reference](../reference/environment-variables.html) for
-details on environment variables that Cargo reads.
+关于Cargo所读取的环境变量，可参见[the reference](../reference/environment-variables.html)
 
 
-## EXIT STATUS
+## 退出状态
 
-* `0`: Cargo succeeded.
-* `101`: Cargo failed to complete.
+* `0`: Cargo命令执行成功
+* `101`: Cargo命令未能完成.
 
 
 ## EXAMPLES
