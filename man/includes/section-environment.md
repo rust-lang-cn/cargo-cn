@@ -1,4 +1,3 @@
-## ENVIRONMENT
+## 环境
 
-See [the reference](../reference/environment-variables.html) for
-details on environment variables that Cargo reads.
+关于Cargo所读取的环境变量，可参见[the reference](../reference/environment-variables.html)

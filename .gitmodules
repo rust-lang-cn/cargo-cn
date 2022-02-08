@@ -1,0 +1,3 @@
+[submodule "cargo-doc-sync"]
+	path = cargo-doc-sync
+	url = https://github.com/madolchepalooza/cargo-doc-sync.git

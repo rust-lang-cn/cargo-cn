@@ -1,46 +1,46 @@
 # cargo-clean(1)
 {{*set actionverb="Clean"}}
 
-## NAME
+## 名称
 
-cargo-clean - Remove generated artifacts
+cargo-clean - 移除已生成的工件
 
-## SYNOPSIS
+## 用法
 
 `cargo clean` [_options_]
 
-## DESCRIPTION
+## 描述
 
-Remove artifacts from the target directory that Cargo has generated in the
-past.
+将Cargo生成的工件从生成目标目录中移除。
 
-With no options, `cargo clean` will delete the entire target directory.
+若不添加参数，`cargo clean` 会删除整个target目录。
 
-## OPTIONS
+## 可选参数
 
-### Package Selection
+### 选择包
 
-When no packages are selected, all packages and all dependencies in the
-workspace are cleaned.
+若不指定包名，则清除工作目录中的所有的包和依赖
 
 {{#options}}
 {{#option "`-p` _spec_..." "`--package` _spec_..." }}
-Clean only the specified packages. This flag may be specified
-multiple times. See {{man "cargo-pkgid" 1}} for the SPEC format.
+只清理参数指定的包中的文件。这个参数可以多次使用来指定多个包，详见 {{man "cargo-pkgid" 1}} 。
 {{/option}}
 {{/options}}
 
-### Clean Options
+### 清理选项
 
 {{#options}}
 
 {{#option "`--doc`" }}
-This option will cause `cargo clean` to remove only the `doc` directory in
-the target directory.
+添加该参数后，`cargo clean`命令只会移除生成目标目录中的`doc`目录。
 {{/option}}
 
 {{#option "`--release`" }}
-Clean all artifacts that were built with the `release` or `bench` profiles.
+移除`release`目录中的工件。
+{{/option}}
+
+{{#option "`--profile` _name_" }}
+移除指定编译配置(__Profile__)目录中的全部工件。
 {{/option}}
 
 {{> options-target-dir }}
@@ -49,13 +49,13 @@ Clean all artifacts that were built with the `release` or `bench` profiles.
 
 {{/options}}
 
-### Display Options
+### 显示选项
 
 {{#options}}
 {{> options-display }}
 {{/options}}
 
-### Manifest Options
+### 清单选项
 
 {{#options}}
 {{> options-manifest-path }}
@@ -69,15 +69,15 @@ Clean all artifacts that were built with the `release` or `bench` profiles.
 
 {{> section-exit-status }}
 
-## EXAMPLES
+## 示例
 
-1. Remove the entire target directory:
+1. 移除整个生成目标目录:
 
        cargo clean
 
-2. Remove only the release artifacts:
+2. 仅移除release目录中的工件:
 
        cargo clean --release
 
-## SEE ALSO
+## 相关
 {{man "cargo" 1}}, {{man "cargo-build" 1}}
