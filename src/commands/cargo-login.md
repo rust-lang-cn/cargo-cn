@@ -40,26 +40,25 @@ which is defined by the <code>registry.default</code> config key which defaults 
 <dl>
 <dt class="option-term" id="option-cargo-login--v"><a class="option-anchor" href="#option-cargo-login--v"></a><code>-v</code></dt>
 <dt class="option-term" id="option-cargo-login---verbose"><a class="option-anchor" href="#option-cargo-login---verbose"></a><code>--verbose</code></dt>
-<dd class="option-desc">Use verbose output. May be specified twice for &quot;very verbose&quot; output which
-includes extra output such as dependency warnings and build script output.
-May also be specified with the <code>term.verbose</code>
+<dd class="option-desc">启用更加详细的输出。可两次使用来显示&quot;非常详细&quot;的输出，其中包含了诸如 依赖警告 以及 构建脚本输出 等额外的输出内容。
+也可通过<code>term.verbose</code>指定。
 <a href="../reference/config.html">config value</a>.</dd>
 
 
 <dt class="option-term" id="option-cargo-login--q"><a class="option-anchor" href="#option-cargo-login--q"></a><code>-q</code></dt>
 <dt class="option-term" id="option-cargo-login---quiet"><a class="option-anchor" href="#option-cargo-login---quiet"></a><code>--quiet</code></dt>
-<dd class="option-desc">No output printed to stdout.</dd>
+<dd class="option-desc">不输出Cargo的日志信息。也可通过<code>term.quiet</code>指定。
+<a href="../reference/config.html">config value</a>.</dd>
 
 
 <dt class="option-term" id="option-cargo-login---color"><a class="option-anchor" href="#option-cargo-login---color"></a><code>--color</code> <em>when</em></dt>
-<dd class="option-desc">Control when colored output is used. Valid values:</p>
+<dd class="option-desc">控制输出内容的颜色。有效取值如下：</p>
 <ul>
-<li><code>auto</code> (default): Automatically detect if color support is available on the
-terminal.</li>
-<li><code>always</code>: Always display colors.</li>
-<li><code>never</code>: Never display colors.</li>
+<li><code>auto</code> (默认)：自动检测终端是否支持带颜色的输出。</li>
+<li><code>always</code>：总显示带颜色的输出。</li>
+<li><code>never</code>：从不显示带颜色的输出。</li>
 </ul>
-<p>May also be specified with the <code>term.color</code>
+<p>也可通过<code>term.color</code>指定。
 <a href="../reference/config.html">config value</a>.</dd>
 
 
@@ -89,16 +88,15 @@ for more information about how toolchain overrides work.</dd>
 </dl>
 
 
-## ENVIRONMENT
+## 环境
 
-See [the reference](../reference/environment-variables.html) for
-details on environment variables that Cargo reads.
+关于Cargo所读取的环境变量，可参见[the reference](../reference/environment-variables.html)
 
 
-## EXIT STATUS
+## 退出状态
 
-* `0`: Cargo succeeded.
-* `101`: Cargo failed to complete.
+* `0`: Cargo命令执行成功
+* `101`: Cargo命令未能完成.
 
 
 ## EXAMPLES

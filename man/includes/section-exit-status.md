@@ -1,4 +1,4 @@
-## EXIT STATUS
+## 退出状态
 
-* `0`: Cargo succeeded.
-* `101`: Cargo failed to complete.
+* `0`: Cargo命令执行成功
+* `101`: Cargo命令未能完成.

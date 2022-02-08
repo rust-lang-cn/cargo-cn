@@ -40,7 +40,9 @@ they have `required-features` that are missing.
 
 {{> options-release }}
 
-{{> options-profile }}
+{{> options-profile-legacy-check }}
+
+{{> options-ignore-rust-version }}
 
 {{/options}}
 
@@ -72,9 +74,8 @@ they have `required-features` that are missing.
 
 {{#options}}
 {{> options-jobs }}
+{{> options-future-incompat }}
 {{/options}}
-
-{{> section-profiles }}
 
 {{> section-environment }}
 

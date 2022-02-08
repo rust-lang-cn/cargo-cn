@@ -25,7 +25,7 @@ OPTIONS
            Create a package with a library target (src/lib.rs).
 
        --edition edition
-           Specify the Rust edition to use. Default is 2018. Possible values:
+           Specify the Rust edition to use. Default is 2021. Possible values:
            2015, 2018, 2021
 
        --name name
@@ -51,25 +51,28 @@ OPTIONS
 
    Display Options
        -v, --verbose
-           Use verbose output. May be specified twice for "very verbose" output
-           which includes extra output such as dependency warnings and build
-           script output. May also be specified with the term.verbose config
-           value <https://doc.rust-lang.org/cargo/reference/config.html>.
+
+           启用更加详细的输出。可两次使用来显示"非常详细"的输出，其中包含了诸如
+           依赖警告 以及 构建脚本输出 等额外的输出内容。
+           也可通过term.verbose指定。 config value
+           <https://doc.rust-lang.org/cargo/reference/config.html>.
 
        -q, --quiet
-           No output printed to stdout.
+           不输出Cargo的日志信息。也可通过term.quiet指定。
+           config value
+           <https://doc.rust-lang.org/cargo/reference/config.html>.
 
        --color when
-           Control when colored output is used. Valid values:
+           控制输出内容的颜色。有效取值如下：
 
-           o  auto (default): Automatically detect if color support is
-              available on the terminal.
+           o  auto
+              (默认)：自动检测终端是否支持带颜色的输出。
 
-           o  always: Always display colors.
+           o  always：总显示带颜色的输出。
 
-           o  never: Never display colors.
+           o  never：从不显示带颜色的输出。
 
-           May also be specified with the term.color config value
+           也可通过term.color指定。 config value
            <https://doc.rust-lang.org/cargo/reference/config.html>.
 
    Common Options
@@ -87,15 +90,14 @@ OPTIONS
            Unstable (nightly-only) flags to Cargo. Run cargo -Z help for
            details.
 
-ENVIRONMENT
-       See the reference
+环境
+       关于Cargo所读取的环境变量，可参见the reference
        <https://doc.rust-lang.org/cargo/reference/environment-variables.html>
-       for details on environment variables that Cargo reads.
 
-EXIT STATUS
-       o  0: Cargo succeeded.
+退出状态
+       o  0: Cargo命令执行成功
 
-       o  101: Cargo failed to complete.
+       o  101: Cargo命令未能完成.
 
 EXAMPLES
        1. Create a binary Cargo package in the given directory:

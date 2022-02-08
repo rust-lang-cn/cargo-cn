@@ -1,2 +1,5 @@
 # Ignore built book
 book/
+semver-check/target
+semver-check/Cargo.lock
+mdman/target
