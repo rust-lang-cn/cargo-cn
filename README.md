@@ -58,7 +58,7 @@ $ mdbook build
 2. 《Cargo 手册》中的 Markdown 文件（包含一些 HTML），保存在 `src/doc/src/commands/` 目录中。
 3. 纯文本（在Windows中没有人的平台上的嵌入式手册页需要），保存在 `src/doc/man/generated_txt/` 目录中。
 
-要重新鬼建手册页，请build-man.sh在src/doc目录中运行脚本。
+要重新构建手册页，请build-man.sh在src/doc目录中运行脚本。
 
 ```console
 $ ./build-man.sh
