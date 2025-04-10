@@ -7,7 +7,7 @@
 在 Linux 和 macOS 系统上，这可以通过以下方式完成:
 
 ```console
-$ curl -sSf https://static.rust-lang.org/rustup.sh | sh
+curl https://sh.rustup.rs -sSf | sh
 ```
 
 它将下载一个脚本，然后开始安装。如果一切顺利，您会看到:
