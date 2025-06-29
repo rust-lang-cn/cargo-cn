@@ -4,7 +4,7 @@
 
 ### 指定依赖，来自 crates.io
 
-默认情况下，Cargo 是准备好，在[crates.io]上查找依赖项。在这种情况下，只需要名称和版本字符串。在[Cargo 指南](../guide/index.md)，我们选择了一个依赖项-`time`箱:
+默认情况下，Cargo 是准备好，在[crates.io]上查找依赖项。在这种情况下，只需要名称和版本字符串。在[Cargo 指南](../guide/index.md)，我们选择了一个依赖项-`time`:
 
 ```toml
 [dependencies]
@@ -109,7 +109,7 @@ $ cargo new hello_utils
 hello_utils = { path = "hello_utils" }
 ```
 
-这告诉 Cargo 我们依赖于一个叫做`hello_utils`的箱子，这能在`hello_utils`文件夹找到(相对于，写在`Cargo.toml`路径).
+这告诉 Cargo 我们依赖于一个叫做`hello_utils`的包，这能在`hello_utils`文件夹找到(相对于，写在`Cargo.toml`路径).
 
 就是这样! 下一步`cargo build`将自动构建`hello_utils`，以及它自己的所有依赖项，其他人也可以开始使用它。但是，[crates.io]不允许仅使用 **路径指定依赖项** 的包。如果我们想发布我们的`hello_world`箱子，我们需要发布一个版本`hello_utils`至[crates.io](https://crates.io)，并在依赖项行中指定其版本:
 
@@ -372,7 +372,7 @@ mio = "0.0.1"
 
 > 构建 依赖项
 
-您可以在构建脚本中使用，依赖其他基于 Cargo 的箱。依赖关系是由清单的`build-dependencies`部分定义:
+您可以在构建脚本中使用，依赖其他基于 Cargo 的包。依赖关系是由清单的`build-dependencies`部分定义:
 
 ```toml
 [build-dependencies]
@@ -428,7 +428,7 @@ extern crate bar; // git repository
 extern crate baz; // registry `custom`
 ```
 
-所有这三个箱的包名称在他们自己`Cargo.toml`，都是`foo`，所以我们明确地告知 Cargo ，使用的是我们想要的`package`字段(如 package = "foo"包名，即我们在本地调用其他东西)。如果没有指定`package`，则默认为所请求的依赖项的名称。
+所有这三个包的包名称在他们自己`Cargo.toml`，都是`foo`，所以我们明确地告知 Cargo ，使用的是我们想要的`package`字段(如 package = "foo"包名，即我们在本地调用其他东西)。如果没有指定`package`，则默认为所请求的依赖项的名称。
 
 请注意，如果您有一个可选的(optional)依赖项，例如:
 
@@ -437,7 +437,7 @@ extern crate baz; // registry `custom`
 foo = { version = "0.1", package = 'bar', optional = true }
 ```
 
-你依赖于一个`bar`箱子，其来自 crates.io，但你箱子有一个`foo`特性，取代了一个`bar`特性。也就是说，在重命名时，特性的名称拿掉了依赖项的名称，而不是包名称。
+你依赖于一个`bar`包，其来自 crates.io，但你的包有一个`foo`特性，取代了`bar`特性。也就是说，在重命名时，特性的名称拿掉了依赖项的名称，而不是包名称。
 
 启用传递依赖项的工作方式类似，例如我们可以将以下内容，添加到上面的清单中:
 
