@@ -52,7 +52,7 @@ Rust 本身提供了基于平台，配置代码段的工具。Cargo 也支持[�
 
 [target-deps]: reference/specifying-dependencies.md#platform-specific-dependencies
 
-从长远来看，我们正在寻找使用 Cargo 方便地跨编译包的方法.
+从长远来看，我们正在寻找使用 Cargo 方便地交叉编译包的方法.
 
 ### Does Cargo support environments, like `production` or `test`?
 
