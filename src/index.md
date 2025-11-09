@@ -16,25 +16,36 @@
 
 ![Cargo Logo](images/Cargo-Logo-Small.png)
 
-Cargo 是[Rust]的 _包管理器_。Cargo 会下载您 Rust 的包依赖项，编译您的包，生成可分发的包，并将它们上传到[crates.io] - Rust 社区的*包注册表*。你可以为这本书做出贡献在[GitHub].
+Cargo 是 [Rust] 的 _包管理器_。Cargo 会下载您 Rust 的包依赖项，编译您的包，生成可分发的包，并将它们上传到 [crates.io] - Rust 社区的*包注册表*。你可以通过 [Github] 为本书做贡献。
 
 ### 章节
 
 **[入门](getting-started/index.md)**
 
-要开始使用 Cargo，请安装 Cargo(和 Rust)并设置您的第一个crate.
+开始使用 Cargo，安装 Cargo (和 Rust)并设置您的第一个crate。
 
 **[Cargo 指南](guide/index.md)**
 
-该指南将为您提供，有关如何使用 Cargo 开发 Rust 包的所有信息.
+该指南将为您提供使用 Cargo 开发 Rust 包的所有信息。
 
 **[Cargo 参考](reference/index.md)**
 
-该参考文献涵盖了 Cargo 各个领域的细节.
+该参考文献涵盖了 Cargo 各个领域的细节。
 
 **[常见问题](faq.md)**
+
+**附录**
+
+- [词汇表](./appendix/glossary.md)
+- [Git 授权](./appendix/git-authentication.md)
+
+**其他文档**
+
+- [变更记录][change-log] -- 详细记录每次版本更新时 Cargo 的变化。
+- [Rust 官方文档][rust-doc] -- Rust 官方工具和文档链接。
 
 [rust]: https://www.rust-lang.org/
 [crates.io]: https://crates.io/
 [github]: https://github.com/rust-lang/cargo/tree/master/src/doc/src
-
+[change-log]: https://doc.rust-lang.org/cargo/CHANGELOG.html
+[rust-doc]: https://doc.rust-lang.org/
