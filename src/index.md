@@ -16,7 +16,7 @@
 
 ![Cargo Logo](images/Cargo-Logo-Small.png)
 
-Cargo 是 [Rust] 的 [*包管理器*][def-package-manager]。Cargo 会下载您的 Rust [包][def-package] 的依赖项，编译你的包，生成可分发的包，并将它们上传到 [crates.io] - Rust 社区的 [*包注册表*][def-package-registry]。你可以通过 GitHub 为本书[中文版][zhcn-version]或[原版][en-version]做贡献。
+Cargo 是 [Rust] 的 [*包管理器*][def-package-manager]。Cargo 会下载你的 Rust [软件包 (package)][def-package] 的依赖项，编译它，生成可分发的软件包，并上传到 [crates.io] - Rust 社区的 [*包注册表*][def-package-registry]。你可以通过 GitHub 为本书[中文版][zhcn-version]或[原版][en-version]做贡献。
 
 ## 章节
 
@@ -26,7 +26,7 @@ Cargo 是 [Rust] 的 [*包管理器*][def-package-manager]。Cargo 会下载您�
 
 **[Cargo 指南](guide/index.md)**
 
-该指南将为您提供使用 Cargo 开发 Rust 包的所有信息。
+该指南将为你提供使用 Cargo 开发 Rust 包的所有信息。
 
 **[Cargo 参考](reference/index.md)**
 

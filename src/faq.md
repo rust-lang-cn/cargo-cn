@@ -1,16 +1,16 @@
-## 常见问题
+# 常见问题
 
-### Is the plan to use GitHub as a package repository?
+## Is the plan to use GitHub as a package repository?
 
-> 是否有计划，使用 Github 作为一个包库 ？
+> 是否有计划使用 Github 作为一个包库 ？
 
-不，Cargo 的计划是使用[crates.io]，像 NPM 或 RuuGuMes 对应 npmjs.org 和 rubygems.org。
+不，Cargo 的计划是使用[crates.io]，像 npm 或 RuuGuMes 对应 npmjs.org 和 rubygems.org。
 
 我们计划永远（通过些配置）支持 git 存储库作为包的来源，因为它们可以用于早期开发和临时补丁（加了点灵活性），即便人们使用主要使用注册表作为包的来源。
 
-### Why build crates.io rather than use GitHub as a registry?
+## Why build crates.io rather than use GitHub as a registry?
 
-> 为啥，选 crates.io，而不是使用 Github 作为 注册表 ？
+> 为什么选用 crates.io，而非 Github 作为 注册表 ？
 
 我们认为支持多种下载包的方式非常重要，包括从 GitHub 下载包，并将包复制到包本身.
 
@@ -26,17 +26,17 @@
 - **可发现性**. 中央注册表提供了查找现有包的简单方式。结合标记(版本)，这也使得注册中心能够提供生态系统的范围信息，例如最流行或最依赖的包的列表.
 - **速度**. 中心注册中心使得可以快速有效地只获取包的元数据，然后只高效地下载已发布的包，而不会出现在存储库中的其他膨胀。这大大提高了依赖性解析和获取的速度。要知道随着依赖关系图的扩展，下载所有的 git 存储库会陷入困境。还要记住的是，并不是每个人都有高速、低延迟的互联网连接.
 
-### Will Cargo work with C code (or other languages)?
+## Will Cargo work with C code (or other languages)?
 
 > Cargo 可与 C 语言代码(或其他语言)一起工作吗?
 
-可以的!
+当然可以!
 
 Cargo 处理编译 Rust 代码，但我们知道许多 Rust 包与 C 代码都有链接。我们还知道除 Rust 之外，在编译语言方面的工具，已建立了数十年。
 
-我们的解决方案:Cargo 允许一个包可以[指定脚本](./build-scripts.md)(用 Rust 编写)，其在调用`rustc`之前运行。 利用 Rust 实现特定于平台的配置和重构包之间的常见构建功能。
+我们的解决方案: Cargo 允许一个包[指定脚本](./build-scripts.md)(用 Rust 编写)。其在调用`rustc`之前运行。 利用 Rust 实现特定于平台的配置和重构包之间的常见构建功能。
 
-### Can Cargo be used inside of `make` (or `ninja`, or ...)
+## Can Cargo be used inside of `make` (or `ninja`, or ...)
 
 > Cargo 能被用在 `make`(或 `ninja`或...) 中吗 ?
 
@@ -44,7 +44,7 @@ Cargo 处理编译 Rust 代码，但我们知道许多 Rust 包与 C 代码都�
 
 我们已将 Cargo 设计成在这些环境中工作良好，并注意错误代码和机器可读输出模式等事项。在这些方面我们还有一些工作要做，但是在传统脚本上下文中使用 Cargo 是我们从一开始就设计的，并且将继续优先考虑。
 
-### Does Cargo handle multi-platform packages or cross-compilation?
+## Does Cargo handle multi-platform packages or cross-compilation?
 
 > Cargo 是怎么平衡 多平台或跨平台的包的？
 
@@ -54,7 +54,7 @@ Rust 本身提供了基于平台，配置代码段的工具。Cargo 也支持[�
 
 从长远来看，我们正在寻找使用 Cargo 方便地交叉编译包的方法.
 
-### Does Cargo support environments, like `production` or `test`?
+## Does Cargo support environments, like `production` or `test`?
 
 > Cargo 有没支持像`production` 或 `test`这样的环境？
 
@@ -67,7 +67,7 @@ Rust 本身提供了基于平台，配置代码段的工具。Cargo 也支持[�
 - 特定环境变量 `#[cfg]`
 - 一个`cargo test`命令
 
-### Does Cargo work on Windows?
+## Does Cargo work on Windows?
 
 > Windows 系统 呢，Cargo 能搞吗？
 
@@ -77,7 +77,7 @@ Rust 本身提供了基于平台，配置代码段的工具。Cargo 也支持[�
 
 [3]: https://github.com/rust-lang/cargo/issues
 
-### Why do binaries have `Cargo.lock` in version control, but not libraries?
+## Why do binaries have `Cargo.lock` in version control, but not libraries?
 
 > 为啥，输出二进制的 Cargo 项目具有`Cargo.lock`，而单输出库的，就没有？
 
@@ -91,7 +91,7 @@ Rust 本身提供了基于平台，配置代码段的工具。Cargo 也支持[�
 
 换句话说，库为它们的依赖项指定了 semver 版本，但是不用(无法)看到全部内容。只有像二进制文件这样的最终产品才需要有完整的图，来决定应该使用什么版本的依赖。
 
-### Can libraries use `*` as a version for their dependencies?
+## Can libraries use `*` as a version for their dependencies?
 
 > 作为库的项目，可以使用`*`作为它们的依赖的版本号吗?
 
@@ -99,7 +99,7 @@ Rust 本身提供了基于平台，配置代码段的工具。Cargo 也支持[�
 
 库是*可以*，但严格来说，他们不应该这样做。`*`版本要求，说明了"这将适用于任何版本"，而这永远不会是真的。库应该总是指定它们工作的范围，即使它和"每个 1.x.y 版本"一样。
 
-### Why `Cargo.toml`?
+## Why `Cargo.toml`?
 
 作为与 Cargo 最频繁的交互之一，为什么要命名配置文件叫`Cargo.toml`的问题不时出现。选择领先的大写—`C`，是为了确保清单与目录清单中的其他类似配置文件组合排序。对文件进行排序时，通常将大写字母放在小写字母之前，确保`Makefile`和`Cargo.toml`文件会放在一起。选择`.toml`结尾是强调文件是[特定的配置文件格式](https://github.com/toml-lang/toml).
 
@@ -107,7 +107,7 @@ Cargo 不允许其他名称(如`cargo.toml`或`Cargofile`)，来强调如何如�
 
 [crates.io]: https://crates.io/
 
-### How can Cargo work offline?
+## How can Cargo work offline?
 
 > Cargo 能 离线 工作吗？
 
