@@ -2,7 +2,7 @@
 
 本指南将为您提供有关如何使用 Cargo 开发 Rust 包的所有信息.
 
-- [为什么 Cargo 存在](./why-cargo-exists.md)
+- [为什么会有 Cargo](./why-cargo-exists.md)
 - [创建一个新包](./creating-a-new-project.md)
 - [使用现有的 Cargo 包装](./working-on-an-existing-project.md)
 - [依赖](./dependencies.md)

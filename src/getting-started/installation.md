@@ -16,7 +16,7 @@ curl https://sh.rustup.rs -sSf | sh
 Rust is installed now. Great!
 ```
 
-在 Windows 上，下载并运行 [rustup-init.exe]。它将在控制台中启动安装，并在成功时显示上述消息.
+在 Windows 上，下载并运行 [rustup-init.exe]。它将在控制台中启动安装，并在成功时显示上述消息。
 
 在此之后，你可以使用 `rustup` 命令，安装 `beta` 或者 `nightly` 版本的 Rust 和 Cargo。
 

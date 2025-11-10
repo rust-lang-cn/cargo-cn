@@ -1,16 +1,16 @@
-## 创建一个新项目
+# 创建一个新的 Package
 
-要使用 Cargo 启动新项目，请使用`cargo new`:
+要使用 Cargo 生成新 [package][def-package]，请用 `cargo new` :
 
-```shell
+```console
 $ cargo new hello_world --bin
 ```
 
-我们传递`--bin`，是因为我们正在制作一个二进制程序(默认): 如果我们正在创建一个库(lib)，我们就会把传递`--lib`。默认情况下，这个目录会初始化为一个新的`git`存储库，如果您不希望它这样做，请传递`--vcs none`。
+传递 `--bin`，是因为我们正在生成一个二进制程序；而如果我们正在创建一个库(lib)，则需要传递 `--lib`。默认情况下，这个目录会初始化为一个新的 `git` 存储库，如果你不希望它这样做，请传递 `--vcs none`。
 
-让我们来看看 Cargo 为我们带来了什么:
+让我们来看看 Cargo 为我们生成了什么:
 
-```shell
+```console
 $ cd hello_world
 $ tree .
 .
@@ -21,21 +21,22 @@ $ tree .
 1 directory, 2 files
 ```
 
-这就是我们开始所需要的一切首。先让我们看看`Cargo.toml`:
+<!-- 这就是我们开始所需要的一切首。先让我们看看`Cargo.toml`: -->
+我们再仔细看看 `Cargo.toml`: 
 
 ```toml
 [package]
 name = "hello_world"
 version = "0.1.0"
 authors = ["Your Name <you@example.com>"]
-edition = "2018"
+edition = "2024"
 
 [dependencies]
 ```
 
-这被称为一个**manifest**元清单，它包含了 Cargo 编译项目所需的所有元数据.
+这被称为[***manifest***][def-manifest]，它包含了 Cargo 编译项目所需的所有元数据。这份文件以 [TOML][TOML] (读作 /tɑməl/)的格式记录下来。
 
-那`src/main.rs`有啥:
+那 `src/main.rs` 有啥:
 
 ```rust
 fn main() {
@@ -43,68 +44,43 @@ fn main() {
 }
 ```
 
-Cargo 为我们创造了一个"hello_world".我们来编译它:
+Cargo 为我们生成了一份 "hello world" 程序，也就是一份 [*binary crate*][def-crate]。现在来编译它:
 
-```shell
+```console
 $ cargo build
    Compiling hello_world v0.1.0 (file:///path/to/project/hello_world)
 ```
 
 然后运行它:
 
-```shell
+```console
 $ ./target/debug/hello_world
 Hello, world!
 ```
 
-我们也可以直接使用`cargo run`，它会自行编译，然后运行它, 一步到位:
+我们也可以直接使用 `cargo run` 来编译并运行它，这只需要一步 (若并没有修改源文件，`Compiling` 这行就不会出现。):
 
-```shell
+```console
 $ cargo run
-     Fresh hello_world v0.1.0 (file:///path/to/project/hello_world)
-   Running `target/hello_world`
+   Compiling hello_world v0.1.0 (file:///path/to/package/hello_world)
+     Running `target/debug/hello_world`
 Hello, world!
 ```
 
-您会注意到已创建了几个新文件和目录:
+你可能会发现 `Cargo.lock`，它此前从未出现过。尽管讨论一份 `.lock` 文件是没意思的，但它保管了你的项目的依赖信息，尽管你从未为项目引入任何依赖。
 
-```shell
-$ tree .
-.
-|-- Cargo.lock
-|-- Cargo.toml
-|-- src
-|   `-- main.rs
-`-- target
-    `-- debug
-        |-- build
-        |-- deps
-        |   |-- hello_world-6ad0b2df81336e7f
-        |   |-- hello_world-6ad0b2df81336e7f.d
-        |   `-- hello_world-6ad0b2df81336e7f.dSYM
-        |       `-- Contents
-        |           |-- Info.plist
-        |           `-- Resources
-        |               `-- DWARF
-        |                   `-- hello_world-6ad0b2df81336e7f
-        |-- examples
-        |-- hello_world
-        |-- hello_world.d
-        |-- hello_world.dSYM -> deps/hello_world-6ad0b2df81336e7f.dSYM
-        |-- incremental
-        |   // ...
-        `-- native
+一旦你准备好构建 release，使用 `cargo build --release` 命令通过优化编译你的项目:
 
-15 directories, 19 files
-```
-
-这个`Cargo.lock`文件啊，是包含我们的依赖项的有关信息(即便还没有依赖)，其内容看起来可不是很有趣啊。再有就是`target`目录包含所有构建产品(二进制文件..)，并且，可以看出，Cargo 默认生成调试(debug)版本。您可以使用`cargo build --release`，这会在开启优化的情况下，编译文件:
-
-```shell
+```console
 $ cargo build --release
-   Compiling hello_world v0.1.0 (file:///path/to/project/hello_world)
+   Compiling hello_world v0.1.0 (file:///path/to/package/hello_world)
 ```
 
-`cargo build --release`将结果二进制文件放入`target/release`，而不再是`target/debug`目录.
+`cargo build --release` 会让你的二进制文件生成于 `target/release` 目录下，而非 `target/debug`。
 
-调试模式的编译是开发的默认设置 - 编译时间较短，因为编译器不进行优化，但代码运行速度较慢。发布(release)模式编译需要更长时间，但代码运行速度更快。
+在 debug 模式下编译是开发过程中的默认选项。因为此时编译器并不会做太多优化，所以编译时间较短，代价就是这样得到的二进制文件性能很差，跑得很慢。相对的，release 模式就会用掉更多时间编译，在此期间编译器会尽力优化，保证项目的运行速度。
+
+[TOML]: https://toml.io
+[def-crate]: ../appendix/glossary.md#crate
+[def-manifest]: ../appendix/glossary.md#manifest
+[def-package]: ../appendix/glossary.md#package

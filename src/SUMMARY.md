@@ -7,7 +7,7 @@
     * [初次使用 Cargo](getting-started/first-steps.md)
 
 * [Cargo 指南](guide/index.md)
-    * [为什么存在 Cargo](guide/why-cargo-exists.md)
+    * [为什么会有 Cargo](guide/why-cargo-exists.md)
     * [创建一个新的包](guide/creating-a-new-project.md)
     * [处理现有包](guide/working-on-an-existing-project.md)
     * [依赖](guide/dependencies.md)

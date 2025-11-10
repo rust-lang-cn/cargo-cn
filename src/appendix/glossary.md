@@ -2,25 +2,25 @@
 
 - 词汇表
 
-### Artifact
+## Artifact
 
 - 工件
 
 一个*Artifact*是由编译过程创建的文件或文件集。这包括可链接库和可执行二进制文件.
 
-### Crate
+## Crate
 
 - 箱 (包/库， 又一抽象名)
 
 包中的每个目标都是*箱*。Crates 是库或可执行二进制文件。它可能松散地引用目标的源代码或目标生成的编译工件。一个箱也可以指从注册表中提取的压缩包.
 
-### Edition
+## Edition
 
 - 版本
 
 一个*Rust Edition*是 Rust 语言的开发里程碑。该[一个包的版本][edition-field]在`Cargo.toml`清单中指定，各个目标可以指定它们使用的版本。见[版本指南][edition guide]欲获得更多信息.
 
-### Feature
+## Feature
 
 - 特性/特征/功能
 
@@ -28,17 +28,17 @@
 
 Cargo 有[_不稳定的特征标志_][cargo-unstable]，这可以用来实现 Cargo 本身的实验行为。Rust 编译器和 Rustdoc 也有自己的不稳定特征标志(参见[不稳定的书][unstable-book]和[Rustdoc 书][rustdoc-unstable]).
 
-### Index
+## Index
 
 - 索引是注册表中，可搜索的包的列表.
 
-### Lock file
+## Lock file
 
 - (锁定/锁) 文件
 
 `Cargo.lock`，名:_锁定文件_，是一个文件，用于捕获工作空间或包中使用的每个依赖项的确切版本，它由 Cargo 自动生成。看到[Cargo.toml 与 Cargo.lock][cargo.toml vs cargo.lock].
 
-### Manifest
+## Manifest
 
 - 清单/元信息
 
@@ -46,13 +46,13 @@ Cargo 有[_不稳定的特征标志_][cargo-unstable]，这可以用来实现 Ca
 
 一个[_虚拟清单_][virtual]是一个`Cargo.toml`，仅描述工作空间的文件，不包含包。
 
-### Member
+## Member
 
 - 会员/成员
 
 一个*成员*是属于工作空间的一个包.
 
-### Package
+## Package
 
 - 包
 
@@ -62,19 +62,27 @@ Cargo 有[_不稳定的特征标志_][cargo-unstable]，这可以用来实现 Ca
 
 该[_包 ID 规范_][pkgid-spec]， 要么*SPEC*，是一个字符串，用于辨识从特定源，引用特定版本的包唯一性。
 
-### Project
+## Package manager
+
+<!-- package manager definition -->
+
+## Package registry
+
+见 [*registry*](#registry)
+
+## Project
 
 - 包/项目
 
 [package](#package)的另一个名字.
 
-### Registry
+## Registry
 
 - 注册表
 
 一个*注册处*是一种服务，包含可下载的包，可以安装或用作包的依赖项.默认注册表是[crates.io](https://crates.io)。注册表有一个*索引*，其中包含所有包装箱的清单，并告诉 Cargo 如何下载所需的箱。
 
-### Source
+## Source
 
 - 源/资源
 
@@ -88,11 +96,11 @@ Cargo 有[_不稳定的特征标志_][cargo-unstable]，这可以用来实现 Ca
 
 看到[来源更换][source replacement]欲获得更多信息.
 
-### Spec
+## Spec
 
 - 看到[包 ID 规范](#package).
 
-### Target
+## Target
 
 - 目标
 
@@ -107,14 +115,14 @@ Cargo 有[_不稳定的特征标志_][cargo-unstable]，这可以用来实现 Ca
 
 > “target-triple (目标 三元)" 是 编译器的 专用术语，用 “ cpu- vendor- os" 来标识 交叉编译时的 系统类型
 
-### Test Targets
+## Test Targets
 
 Cargo*测试目标*生成二进制文件，帮助验证代码的正确操作和正确性。有两种类型的测试工件:
 
 - **单元测试**- 一个*单元测试*是直接从库或二进制目标编译的可执行二进制文件。它包含库或二进制代码的全部内容，并运行`#[test]`注释函数，用于验证各个代码单元。
 - **集成测试目标**- 一个[_集成测试目标_][integration-tests]是一个来自*测试目标*的可执行的二进制文件，这是一个独特的箱子，其来源位于`tests`目录或由在`Cargo.toml`清单里面的[`[[test]]`表][targets]指定。它旨在仅测试库的公共 API，或执行二进制文件以验证其操作。
 
-### Workspace
+## Workspace
 
 - 工作区
 
