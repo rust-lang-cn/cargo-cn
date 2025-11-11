@@ -7,8 +7,8 @@
     * [初次使用 Cargo](getting-started/first-steps.md)
 
 * [Cargo 指南](guide/index.md)
-    * [为什么存在 Cargo](guide/why-cargo-exists.md)
-    * [创建一个新的包](guide/creating-a-new-project.md)
+    * [为什么需要 Cargo](guide/why-cargo-exists.md)
+    * [创建一个新的软件包](guide/creating-a-new-project.md)
     * [处理现有包](guide/working-on-an-existing-project.md)
     * [依赖](guide/dependencies.md)
     * [项目布局](guide/project-layout.md)
@@ -79,6 +79,6 @@
         * [cargo publish](commands/cargo-publish.md)
         * [cargo yank](commands/cargo-yank.md)
 
-* [参见问题](faq.md)
+* [常见问题](faq.md)
 * [附录：术语白](appendix/glossary.md)
 * [Appendix: Git Authentication](appendix/git-authentication.md)
